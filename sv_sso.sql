@@ -66,3 +66,20 @@ insert into users(
         0,
         0
     );
+create table organizations (
+    id bigint not null,
+    code varchar(64) not null,
+    name varchar(255),
+    status tinyint(1) not null default 1,
+    created_at datetime(6) not null default current_timestamp(6),
+    created_by bigint not null,
+    updated_at datetime(6) not null default current_timestamp(6) on update current_timestamp(6),
+    updated_by bigint not null,
+    primary key (id),
+    constraint organizations_chk_status check (
+        status = 0
+        or status = 1
+    ),
+    constraint unique organizations_code_uindex (code)
+) engine = InnoDB;
+insert into organizations(id, code, name, created_by, updated_by) VALUE (0, 'ROOT', 'root organization', 0, 0);
