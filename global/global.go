@@ -18,4 +18,5 @@ var (
 	LOGGER             *zap.Logger
 	ConcurrencyControl = &singleflight.Group{}
 	UserMgr            model.UsersMgrType
+	OrganizationMgr    model.OrganizationsMgrType
 )
