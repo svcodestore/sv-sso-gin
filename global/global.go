@@ -19,4 +19,5 @@ var (
 	ConcurrencyControl = &singleflight.Group{}
 	UserMgr            model.UsersMgrType
 	OrganizationMgr    model.OrganizationsMgrType
+	ApplicationMgr     model.ApplicationsMgrType
 )

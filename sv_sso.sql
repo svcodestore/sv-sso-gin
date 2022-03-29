@@ -83,3 +83,44 @@ create table organizations (
     constraint unique organizations_code_uindex (code)
 ) engine = InnoDB;
 insert into organizations(id, code, name, created_by, updated_by) VALUE (0, 'ROOT', 'root organization', 0, 0);
+create table applications (
+    id bigint not null,
+    code varchar(64) not null,
+    name varchar(255),
+    internal_url varchar(255),
+    homepage_url varchar(255),
+    status tinyint(1) not null default 1,
+    client_id varchar(255),
+    client_secret varchar(255),
+    redirect_uris varchar(255),
+    token_format varchar(100) default 'JWT',
+    created_at datetime(6) not null default current_timestamp(6),
+    created_by bigint not null,
+    updated_at datetime(6) not null default current_timestamp(6) on update current_timestamp(6),
+    updated_by bigint not null,
+    primary key (id),
+    constraint applications_chk_status check (
+        status = 0
+        or status = 1
+    ),
+    constraint unique applications_code_uindex (code)
+) engine = InnoDB;
+insert into applications(
+        id,
+        code,
+        name,
+        client_id,
+        client_secret,
+        token_format,
+        created_by,
+        updated_by
+    ) VALUE (
+        0,
+        'SSO',
+        'SV SSO',
+        '0ef9d7b504019278e740',
+        '42fbdcb2b910024594c9be51463bbe4861f5b44a',
+        '',
+        0,
+        0
+    );

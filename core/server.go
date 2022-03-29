@@ -20,6 +20,7 @@ func RunServer() {
 	if global.DB != nil {
 		global.UserMgr = model.UsersMgr(global.DB)
 		global.OrganizationMgr = model.OrganizationsMgr(global.DB)
+		global.ApplicationMgr = model.ApplicationsMgr(global.DB)
 
 		db, err := global.DB.DB()
 		if err != nil {

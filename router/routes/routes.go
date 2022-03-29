@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/svcodestore/sv-sso-gin/api/application"
 	"github.com/svcodestore/sv-sso-gin/api/organization"
 
 	"github.com/svcodestore/sv-sso-gin/api/user"
@@ -26,4 +27,12 @@ func (*Routes) Init(g *gin.RouterGroup) {
 	organizationG.DELETE("/:id", organization.DeleteOrganizationById)
 	organizationG.GET("/:id", organization.GetOrganizationById)
 	organizationG.PATCH("/:id", organization.UpdateOrganizationById)
+
+	applicationsG := g.Group("applications")
+	applicationsG.GET("", application.AllApplication)
+	applicationG := g.Group("application")
+	applicationG.POST("", application.CreateApplication)
+	applicationG.DELETE("/:id", application.DeleteApplicationById)
+	applicationG.GET("/:id", application.GetApplicationById)
+	applicationG.PATCH("/:id", application.UpdateApplicationById)
 }

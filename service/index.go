@@ -8,6 +8,7 @@ type Group struct {
 	CryptoService       system.CryptoService
 	UserService         system.UserService
 	OrganizationService system.OrganizationService
+	ApplicationService  system.ApplicationService
 }
 
 var ServiceGroup = new(Group)
