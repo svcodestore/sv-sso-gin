@@ -5,6 +5,7 @@ import (
 
 	"github.com/svcodestore/sv-sso-gin/api"
 	"github.com/svcodestore/sv-sso-gin/api/oauth"
+	"github.com/svcodestore/sv-sso-gin/api/user"
 )
 
 type OAuthRoutes struct {
@@ -20,4 +21,6 @@ func (*OAuthRoutes) Init(r *gin.RouterGroup) {
 	r.POST("logout", api.Logout)
 
 	r.GET("currentUser", api.CurrentUser)
+
+	r.POST("register", user.RegisterUser)
 }

@@ -14,9 +14,10 @@ func (*Routes) Init(g *gin.RouterGroup) {
 	usersG := g.Group("users")
 	usersG.GET("", user.GetAllUser)
 	userG := g.Group("user")
-	userG.GET("/:id", user.GetUserById)
 	userG.POST("", user.CreateUser)
 	userG.DELETE("/:id", user.DeleteUserById)
+	userG.GET("/:id", user.GetUserById)
+	userG.PATCH("/:id", user.UpdateUser)
 
 	organizationsG := g.Group("organizations")
 	organizationsG.GET("", organization.GetAllOrganization)
