@@ -12,15 +12,13 @@ type OAuthRoutes struct {
 }
 
 func (*OAuthRoutes) Init(r *gin.RouterGroup) {
+	r.POST("register", user.RegisterUser)
 	apiG := r.Group("login")
-
 	apiG.POST("", api.Login)
-
-	apiG.POST("oauth2.0", oauth.Login)
-
 	r.POST("logout", api.Logout)
-
 	r.GET("currentUser", api.CurrentUser)
 
-	r.POST("register", user.RegisterUser)
+	oauthG := apiG.Group("oauth2.0")
+	oauthG.GET("/authorize", oauth.Authorize)
+
 }
