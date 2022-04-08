@@ -1,10 +1,9 @@
 package api
 
 import (
-	"github.com/svcodestore/sv-sso-gin/model/common/response"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"github.com/svcodestore/sv-sso-gin/model/common/response"
+	"github.com/svcodestore/sv-sso-gin/model/system/request"
 )
 
 // Login ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
@@ -23,11 +22,27 @@ func Login(c *gin.Context) {
 	password := c.PostForm("password")
 	loginType := c.PostForm("type")
 
-	if loginType == "login" {
-		if _, err := userService.Login(username, password); err != nil {
-			response.FailWithMessage(err.Error(), c)
-		} else {
-			response.Ok(c)
+	if username != "" {
+		if loginType == "login" {
+			if user, err := userService.Login(username, password); err != nil {
+				response.FailWithMessage(err.Error(), c)
+			} else {
+				token, expireAt, err := jwtService.GenerateToken(request.BaseClaims{
+					UUID:        user.UUID,
+					ID:          user.ID,
+					Username:    user.Name,
+					AuthorityId: user.LoginID,
+				})
+				if err != nil {
+					response.FailWithMessage(err.Error(), c)
+				} else {
+					response.OkWithData(gin.H{
+						"user":        user,
+						"accessToken": token,
+						"expireAt":    expireAt,
+					}, c)
+				}
+			}
 		}
 	}
 }
@@ -40,25 +55,4 @@ func Login(c *gin.Context) {
 // @Router /logout [post]
 func Logout(c *gin.Context) {
 	response.Ok(c)
-}
-
-// currentUser ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
-// @Summary Show an account
-// @Description get string by ID
-// @Tags accounts
-// @Accept  json
-// @Produce  json
-// @Param id path string true "Account ID"
-// @Success 200 {object} model.Account
-// @Failure 400 {object} model.HTTPError
-// @Router /accounts/{id} [get]
-func CurrentUser(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"data": gin.H{
-			"name":   "Serati Ma",
-			"avatar": "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png",
-			"access": "admin",
-		},
-	})
 }

@@ -10,6 +10,14 @@ import (
 
 var userService = service.ServiceGroup.UserService
 
+func CurrentUser(c *gin.Context) {
+	response.OkWithData(gin.H{
+		"name":   "Serati Ma",
+		"avatar": "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png",
+		"access": "admin",
+	}, c)
+}
+
 func RegisterUser(c *gin.Context) {
 	loginId := c.PostForm("loginId")
 	password := c.PostForm("password")
@@ -67,7 +75,7 @@ func UpdateUser(c *gin.Context) {
 	status := c.PostForm("status")
 
 	updatingUser := &model.UsersToSave{
-		ID: id,
+		ID:        id,
 		UpdatedBy: uid,
 	}
 
@@ -125,4 +133,3 @@ func GetUserById(c *gin.Context) {
 	user, _ := userService.UserWithId(&model.Users{ID: id})
 	response.OkWithData(user, c)
 }
-

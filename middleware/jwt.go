@@ -19,14 +19,14 @@ func JWTCheck() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.Request.Header.Get("Authorization")
 		if token == "" {
-			response.FailWithMessage("jwt err", c)
+			response.UnAuth(c)
 			c.Abort()
 			return
 		}
 		if strings.HasPrefix(token, "Bearer") {
 			t := strings.Split(token, " ")
 			if len(t) != 2 || t[1] == "" {
-				response.FailWithMessage("jwt err", c)
+				response.UnAuth(c)
 				c.Abort()
 				return
 			}
@@ -36,11 +36,11 @@ func JWTCheck() gin.HandlerFunc {
 		claims, err := j.ParseToken(token)
 		if err != nil {
 			if err == utils.TokenExpired {
-				response.FailWithDetailed(gin.H{"reload": true}, "授权已过期", c)
+				response.UnAuthWithMessage(err.Error(), c)
 				c.Abort()
 				return
 			}
-			response.FailWithDetailed(gin.H{"reload": true}, err.Error(), c)
+			response.UnAuth(c)
 			c.Abort()
 			return
 		}

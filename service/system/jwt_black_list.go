@@ -4,6 +4,8 @@ import (
 	"context"
 	"github.com/svcodestore/sv-sso-gin/global"
 	"github.com/svcodestore/sv-sso-gin/model/system"
+	"github.com/svcodestore/sv-sso-gin/model/system/request"
+	"github.com/svcodestore/sv-sso-gin/utils"
 	"go.uber.org/zap"
 	"time"
 )
@@ -61,6 +63,16 @@ func (jwtService *JwtService) SetRedisJWT(jwt string, userName string) (err erro
 	timer := time.Duration(global.CONFIG.JWT.ExpiresTime) * time.Second
 	err = global.REDIS.Set(context.Background(), userName, jwt, timer).Err()
 	return err
+}
+
+func (jwtService JwtService) GenerateToken(c request.BaseClaims) (token string, expireAt int64, err error) {
+	j := &utils.JWT{
+		SigningKey: []byte(global.CONFIG.JWT.SigningKey),
+	}
+	claims := j.CreateClaims(c)
+	token, err = j.CreateToken(claims)
+	expireAt = claims.RegisteredClaims.ExpiresAt.Unix()
+	return
 }
 
 func LoadAll() {

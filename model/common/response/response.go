@@ -52,3 +52,14 @@ func FailWithMessage(message string, c *gin.Context) {
 func FailWithDetailed(data interface{}, message string, c *gin.Context) {
 	Result(ERROR, data, message, c)
 }
+
+func UnAuth(c *gin.Context) {
+	c.Status(http.StatusUnauthorized)
+}
+
+func UnAuthWithMessage(message string, c *gin.Context) {
+	c.JSON(http.StatusUnauthorized, Response{
+		Code:    1,
+		Message: message,
+	})
+}
