@@ -124,3 +124,44 @@ insert into applications(
         0,
         0
     );
+
+
+create table organization_application
+(
+    organization_id bigint      not null,
+    application_id  bigint      not null,
+    status          tinyint(1)  not null default 1,
+    created_at      datetime(6) not null default current_timestamp(6),
+    created_by      bigint      not null,
+    updated_at      datetime(6) not null default current_timestamp(6) on update current_timestamp(6),
+    updated_by      bigint      not null,
+    primary key (organization_id, application_id),
+    constraint organization_application_chk_status check ( status = 0 or status = 1),
+    constraint organization_application_fk_organization foreign key (organization_id) references `organizations` (id) on update cascade on delete cascade,
+    constraint organization_application_fk_application foreign key (application_id) references `applications` (id) on update cascade on delete cascade,
+    index organization_application_organization_id_index (organization_id),
+    index organization_application_application_id_index (application_id)
+) engine = InnoDB;
+
+insert into organization_application(organization_id, application_id, created_by, updated_by)
+VALUES (0, 0, 0, 0);
+
+create table application_user
+(
+    application_id bigint      not null,
+    user_id        bigint      not null,
+    status         tinyint(1)  not null default 1,
+    created_at     datetime(6) not null default current_timestamp(6),
+    created_by     bigint      not null,
+    updated_at     datetime(6) not null default current_timestamp(6) on update current_timestamp(6),
+    updated_by     bigint      not null,
+    primary key (application_id, user_id),
+    constraint application_user_chk_status check ( status = 0 or status = 1),
+    constraint application_user_fk_application foreign key (application_id) references `applications` (id) on update cascade on delete cascade,
+    constraint application_user_fk_user foreign key (user_id) references `users` (id) on update cascade on delete cascade,
+    index application_user_application_id_index (application_id),
+    index application_user_user_id_index (user_id)
+) engine = InnoDB;
+
+insert into application_user(application_id, user_id, created_by, updated_by)
+VALUES (0, 0, 0, 0);
