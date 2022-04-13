@@ -28,6 +28,9 @@ func (*Routes) Init(g *gin.RouterGroup) {
 	organizationG.GET("/:id", organization.GetOrganizationById)
 	organizationG.PATCH("/:id", organization.UpdateOrganizationById)
 
+	organizationApplicationsG := g.Group("organization-applications")
+	organizationApplicationsG.GET("", organization.GetAllOrganizationApplication)
+
 	applicationsG := g.Group("applications")
 	applicationsG.GET("", application.AllApplication)
 	applicationG := g.Group("application")

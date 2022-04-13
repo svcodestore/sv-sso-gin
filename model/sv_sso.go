@@ -4,9 +4,46 @@ import (
 	"time"
 )
 
+// ApplicationUser [...]
+type ApplicationUser struct {
+	ApplicationID int64        `gorm:"primaryKey;index:application_user_application_id_index;column:application_id;type:bigint;not null" json:"-"`
+	Applications  Applications `gorm:"joinForeignKey:application_id;foreignKey:id" json:"applicationsList"`
+	UserID        int64        `gorm:"primaryKey;index:application_user_user_id_index;column:user_id;type:bigint;not null" json:"-"`
+	Users         Users        `gorm:"joinForeignKey:user_id;foreignKey:id" json:"usersList"`
+	Status        bool         `gorm:"column:status;type:tinyint(1);not null;default:1" json:"status"`
+	CreatedAt     time.Time    `gorm:"column:created_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"createdAt"`
+	CreatedBy     int64        `gorm:"column:created_by;type:bigint;not null" json:"createdBy"`
+	UpdatedAt     time.Time    `gorm:"column:updated_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"updatedAt"`
+	UpdatedBy     int64        `gorm:"column:updated_by;type:bigint;not null" json:"updatedBy"`
+}
+
+// TableName get sql table name.获取数据库表名
+func (m *ApplicationUser) TableName() string {
+	return "application_user"
+}
+
+// ApplicationUserColumns get sql column name.获取数据库列名
+var ApplicationUserColumns = struct {
+	ApplicationID string
+	UserID        string
+	Status        string
+	CreatedAt     string
+	CreatedBy     string
+	UpdatedAt     string
+	UpdatedBy     string
+}{
+	ApplicationID: "application_id",
+	UserID:        "user_id",
+	Status:        "status",
+	CreatedAt:     "created_at",
+	CreatedBy:     "created_by",
+	UpdatedAt:     "updated_at",
+	UpdatedBy:     "updated_by",
+}
+
 // Applications [...]
 type Applications struct {
-	ID           string     `gorm:"primaryKey;column:id;type:bigint;not null" json:"id"`
+	ID           string    `gorm:"primaryKey;column:id;type:bigint;not null" json:"id"`
 	Code         string    `gorm:"unique;column:code;type:varchar(64);not null" json:"code"`
 	Name         string    `gorm:"column:name;type:varchar(255)" json:"name"`
 	InternalURL  string    `gorm:"column:internal_url;type:varchar(255)" json:"internalUrl"`
@@ -58,6 +95,43 @@ var ApplicationsColumns = struct {
 	CreatedBy:    "created_by",
 	UpdatedAt:    "updated_at",
 	UpdatedBy:    "updated_by",
+}
+
+// OrganizationApplication [...]
+type OrganizationApplication struct {
+	OrganizationID int64         `gorm:"primaryKey;index:organization_application_organization_id_index;column:organization_id;type:bigint;not null" json:"-"`
+	Organizations  Organizations `gorm:"joinForeignKey:organization_id;foreignKey:OrganizationID;reference:OrganizationID" json:"organizationsList"`
+	ApplicationID  int64         `gorm:"primaryKey;index:organization_application_application_id_index;column:application_id;type:bigint;not null" json:"-"`
+	Applications   Applications  `gorm:"joinForeignKey:application_id;foreignKey:ApplicationID;reference:ApplicationID" json:"applicationsList"`
+	Status         bool          `gorm:"column:status;type:tinyint(1);not null;default:1" json:"status"`
+	CreatedAt      time.Time     `gorm:"column:created_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"createdAt"`
+	CreatedBy      int64         `gorm:"column:created_by;type:bigint;not null" json:"createdBy"`
+	UpdatedAt      time.Time     `gorm:"column:updated_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"updatedAt"`
+	UpdatedBy      int64         `gorm:"column:updated_by;type:bigint;not null" json:"updatedBy"`
+}
+
+// TableName get sql table name.获取数据库表名
+func (m *OrganizationApplication) TableName() string {
+	return "organization_application"
+}
+
+// OrganizationApplicationColumns get sql column name.获取数据库列名
+var OrganizationApplicationColumns = struct {
+	OrganizationID string
+	ApplicationID  string
+	Status         string
+	CreatedAt      string
+	CreatedBy      string
+	UpdatedAt      string
+	UpdatedBy      string
+}{
+	OrganizationID: "organization_id",
+	ApplicationID:  "application_id",
+	Status:         "status",
+	CreatedAt:      "created_at",
+	CreatedBy:      "created_by",
+	UpdatedAt:      "updated_at",
+	UpdatedBy:      "updated_by",
 }
 
 // Organizations [...]

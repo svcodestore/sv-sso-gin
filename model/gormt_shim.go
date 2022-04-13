@@ -8,6 +8,8 @@ import (
 type UsersMgrType = *_UsersMgr
 type OrganizationsMgrType = *_OrganizationsMgr
 type ApplicationsMgrType = *_ApplicationsMgr
+type ApplicationUserMgrType = *_ApplicationUserMgr
+type OrganizationApplicationMgrType = *_OrganizationApplicationMgr
 
 type Users struct {
 	ID        string    `gorm:"primaryKey;column:id;type:bigint;not null" json:"id"`
