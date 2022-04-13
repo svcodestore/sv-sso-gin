@@ -65,6 +65,8 @@ create table applications
                 status = 0
             or status = 1
         ),
+    constraint applications_fk_created_by foreign key (created_by) references `users` (id) on update cascade on delete restrict,
+    constraint applications_fk_updated_by foreign key (updated_by) references `users` (id) on update cascade on delete restrict,
     constraint unique applications_code_uindex (code)
 ) engine = InnoDB;
 

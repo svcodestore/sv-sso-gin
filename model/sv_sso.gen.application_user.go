@@ -40,6 +40,16 @@ func (obj *_ApplicationUserMgr) Get() (result ApplicationUser, err error) {
 				return
 			}
 		}
+		if err = obj.New().Table("users").Where("id = ?", result.CreatedBy).Find(&result.CreatedByUser).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
+			}
+		}
+		if err = obj.New().Table("users").Where("id = ?", result.UpdatedBy).Find(&result.UpdatedByUser).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
+			}
+		}
 	}
 
 	return
@@ -60,6 +70,16 @@ func (obj *_ApplicationUserMgr) Gets() (results []*ApplicationUser, err error) {
 					return
 				}
 			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
@@ -68,12 +88,12 @@ func (obj *_ApplicationUserMgr) Gets() (results []*ApplicationUser, err error) {
 //////////////////////////option case ////////////////////////////////////////////
 
 // WithApplicationID application_id获取
-func (obj *_ApplicationUserMgr) WithApplicationID(applicationID int64) Option {
+func (obj *_ApplicationUserMgr) WithApplicationID(applicationID string) Option {
 	return optionFunc(func(o *options) { o.query["application_id"] = applicationID })
 }
 
 // WithUserID user_id获取
-func (obj *_ApplicationUserMgr) WithUserID(userID int64) Option {
+func (obj *_ApplicationUserMgr) WithUserID(userID string) Option {
 	return optionFunc(func(o *options) { o.query["user_id"] = userID })
 }
 
@@ -88,7 +108,7 @@ func (obj *_ApplicationUserMgr) WithCreatedAt(createdAt time.Time) Option {
 }
 
 // WithCreatedBy created_by获取
-func (obj *_ApplicationUserMgr) WithCreatedBy(createdBy int64) Option {
+func (obj *_ApplicationUserMgr) WithCreatedBy(createdBy string) Option {
 	return optionFunc(func(o *options) { o.query["created_by"] = createdBy })
 }
 
@@ -98,7 +118,7 @@ func (obj *_ApplicationUserMgr) WithUpdatedAt(updatedAt time.Time) Option {
 }
 
 // WithUpdatedBy updated_by获取
-func (obj *_ApplicationUserMgr) WithUpdatedBy(updatedBy int64) Option {
+func (obj *_ApplicationUserMgr) WithUpdatedBy(updatedBy string) Option {
 	return optionFunc(func(o *options) { o.query["updated_by"] = updatedBy })
 }
 
@@ -119,6 +139,16 @@ func (obj *_ApplicationUserMgr) GetByOption(opts ...Option) (result ApplicationU
 			}
 		}
 		if err = obj.New().Table("users").Where("id = ?", result.UserID).Find(&result.Users).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
+			}
+		}
+		if err = obj.New().Table("users").Where("id = ?", result.CreatedBy).Find(&result.CreatedByUser).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
+			}
+		}
+		if err = obj.New().Table("users").Where("id = ?", result.UpdatedBy).Find(&result.UpdatedByUser).Error; err != nil { //
 			if err != gorm.ErrRecordNotFound { // 非 没找到
 				return
 			}
@@ -150,6 +180,16 @@ func (obj *_ApplicationUserMgr) GetByOptions(opts ...Option) (results []*Applica
 					return
 				}
 			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
@@ -158,7 +198,7 @@ func (obj *_ApplicationUserMgr) GetByOptions(opts ...Option) (results []*Applica
 //////////////////////////enume case ////////////////////////////////////////////
 
 // GetFromApplicationID 通过application_id获取内容
-func (obj *_ApplicationUserMgr) GetFromApplicationID(applicationID int64) (results []*ApplicationUser, err error) {
+func (obj *_ApplicationUserMgr) GetFromApplicationID(applicationID string) (results []*ApplicationUser, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`application_id` = ?", applicationID).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -172,13 +212,23 @@ func (obj *_ApplicationUserMgr) GetFromApplicationID(applicationID int64) (resul
 					return
 				}
 			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
 }
 
 // GetBatchFromApplicationID 批量查找
-func (obj *_ApplicationUserMgr) GetBatchFromApplicationID(applicationIDs []int64) (results []*ApplicationUser, err error) {
+func (obj *_ApplicationUserMgr) GetBatchFromApplicationID(applicationIDs []string) (results []*ApplicationUser, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`application_id` IN (?)", applicationIDs).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -192,13 +242,23 @@ func (obj *_ApplicationUserMgr) GetBatchFromApplicationID(applicationIDs []int64
 					return
 				}
 			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
 }
 
 // GetFromUserID 通过user_id获取内容
-func (obj *_ApplicationUserMgr) GetFromUserID(userID int64) (results []*ApplicationUser, err error) {
+func (obj *_ApplicationUserMgr) GetFromUserID(userID string) (results []*ApplicationUser, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`user_id` = ?", userID).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -212,13 +272,23 @@ func (obj *_ApplicationUserMgr) GetFromUserID(userID int64) (results []*Applicat
 					return
 				}
 			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
 }
 
 // GetBatchFromUserID 批量查找
-func (obj *_ApplicationUserMgr) GetBatchFromUserID(userIDs []int64) (results []*ApplicationUser, err error) {
+func (obj *_ApplicationUserMgr) GetBatchFromUserID(userIDs []string) (results []*ApplicationUser, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`user_id` IN (?)", userIDs).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -228,6 +298,16 @@ func (obj *_ApplicationUserMgr) GetBatchFromUserID(userIDs []int64) (results []*
 				}
 			}
 			if err = obj.New().Table("users").Where("id = ?", results[i].UserID).Find(&results[i].Users).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
 				if err != gorm.ErrRecordNotFound { // 非 没找到
 					return
 				}
@@ -252,6 +332,16 @@ func (obj *_ApplicationUserMgr) GetFromStatus(status bool) (results []*Applicati
 					return
 				}
 			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
@@ -268,6 +358,16 @@ func (obj *_ApplicationUserMgr) GetBatchFromStatus(statuss []bool) (results []*A
 				}
 			}
 			if err = obj.New().Table("users").Where("id = ?", results[i].UserID).Find(&results[i].Users).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
 				if err != gorm.ErrRecordNotFound { // 非 没找到
 					return
 				}
@@ -292,6 +392,16 @@ func (obj *_ApplicationUserMgr) GetFromCreatedAt(createdAt time.Time) (results [
 					return
 				}
 			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
@@ -312,13 +422,23 @@ func (obj *_ApplicationUserMgr) GetBatchFromCreatedAt(createdAts []time.Time) (r
 					return
 				}
 			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
 }
 
 // GetFromCreatedBy 通过created_by获取内容
-func (obj *_ApplicationUserMgr) GetFromCreatedBy(createdBy int64) (results []*ApplicationUser, err error) {
+func (obj *_ApplicationUserMgr) GetFromCreatedBy(createdBy string) (results []*ApplicationUser, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`created_by` = ?", createdBy).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -332,13 +452,23 @@ func (obj *_ApplicationUserMgr) GetFromCreatedBy(createdBy int64) (results []*Ap
 					return
 				}
 			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
 }
 
 // GetBatchFromCreatedBy 批量查找
-func (obj *_ApplicationUserMgr) GetBatchFromCreatedBy(createdBys []int64) (results []*ApplicationUser, err error) {
+func (obj *_ApplicationUserMgr) GetBatchFromCreatedBy(createdBys []string) (results []*ApplicationUser, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`created_by` IN (?)", createdBys).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -348,6 +478,16 @@ func (obj *_ApplicationUserMgr) GetBatchFromCreatedBy(createdBys []int64) (resul
 				}
 			}
 			if err = obj.New().Table("users").Where("id = ?", results[i].UserID).Find(&results[i].Users).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
 				if err != gorm.ErrRecordNotFound { // 非 没找到
 					return
 				}
@@ -372,6 +512,16 @@ func (obj *_ApplicationUserMgr) GetFromUpdatedAt(updatedAt time.Time) (results [
 					return
 				}
 			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
@@ -392,13 +542,23 @@ func (obj *_ApplicationUserMgr) GetBatchFromUpdatedAt(updatedAts []time.Time) (r
 					return
 				}
 			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
 }
 
 // GetFromUpdatedBy 通过updated_by获取内容
-func (obj *_ApplicationUserMgr) GetFromUpdatedBy(updatedBy int64) (results []*ApplicationUser, err error) {
+func (obj *_ApplicationUserMgr) GetFromUpdatedBy(updatedBy string) (results []*ApplicationUser, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`updated_by` = ?", updatedBy).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -412,13 +572,23 @@ func (obj *_ApplicationUserMgr) GetFromUpdatedBy(updatedBy int64) (results []*Ap
 					return
 				}
 			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
 }
 
 // GetBatchFromUpdatedBy 批量查找
-func (obj *_ApplicationUserMgr) GetBatchFromUpdatedBy(updatedBys []int64) (results []*ApplicationUser, err error) {
+func (obj *_ApplicationUserMgr) GetBatchFromUpdatedBy(updatedBys []string) (results []*ApplicationUser, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`updated_by` IN (?)", updatedBys).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -432,6 +602,16 @@ func (obj *_ApplicationUserMgr) GetBatchFromUpdatedBy(updatedBys []int64) (resul
 					return
 				}
 			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
@@ -440,7 +620,7 @@ func (obj *_ApplicationUserMgr) GetBatchFromUpdatedBy(updatedBys []int64) (resul
 //////////////////////////primary index case ////////////////////////////////////////////
 
 // FetchByPrimaryKey primary or index 获取唯一内容
-func (obj *_ApplicationUserMgr) FetchByPrimaryKey(applicationID int64, userID int64) (result ApplicationUser, err error) {
+func (obj *_ApplicationUserMgr) FetchByPrimaryKey(applicationID string, userID string) (result ApplicationUser, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`application_id` = ? AND `user_id` = ?", applicationID, userID).Find(&result).Error
 	if err == nil && obj.isRelated {
 		if err = obj.New().Table("applications").Where("id = ?", result.ApplicationID).Find(&result.Applications).Error; err != nil { //
@@ -453,13 +633,23 @@ func (obj *_ApplicationUserMgr) FetchByPrimaryKey(applicationID int64, userID in
 				return
 			}
 		}
+		if err = obj.New().Table("users").Where("id = ?", result.CreatedBy).Find(&result.CreatedByUser).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
+			}
+		}
+		if err = obj.New().Table("users").Where("id = ?", result.UpdatedBy).Find(&result.UpdatedByUser).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
+			}
+		}
 	}
 
 	return
 }
 
 // FetchIndexByApplicationUserApplicationIDIndex  获取多个内容
-func (obj *_ApplicationUserMgr) FetchIndexByApplicationUserApplicationIDIndex(applicationID int64) (results []*ApplicationUser, err error) {
+func (obj *_ApplicationUserMgr) FetchIndexByApplicationUserApplicationIDIndex(applicationID string) (results []*ApplicationUser, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`application_id` = ?", applicationID).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -473,13 +663,23 @@ func (obj *_ApplicationUserMgr) FetchIndexByApplicationUserApplicationIDIndex(ap
 					return
 				}
 			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
 }
 
 // FetchIndexByApplicationUserUserIDIndex  获取多个内容
-func (obj *_ApplicationUserMgr) FetchIndexByApplicationUserUserIDIndex(userID int64) (results []*ApplicationUser, err error) {
+func (obj *_ApplicationUserMgr) FetchIndexByApplicationUserUserIDIndex(userID string) (results []*ApplicationUser, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`user_id` = ?", userID).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -489,6 +689,76 @@ func (obj *_ApplicationUserMgr) FetchIndexByApplicationUserUserIDIndex(userID in
 				}
 			}
 			if err = obj.New().Table("users").Where("id = ?", results[i].UserID).Find(&results[i].Users).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+		}
+	}
+	return
+}
+
+// FetchIndexByApplicationUserFkCreatedBy  获取多个内容
+func (obj *_ApplicationUserMgr) FetchIndexByApplicationUserFkCreatedBy(createdBy string) (results []*ApplicationUser, err error) {
+	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`created_by` = ?", createdBy).Find(&results).Error
+	if err == nil && obj.isRelated {
+		for i := 0; i < len(results); i++ {
+			if err = obj.New().Table("applications").Where("id = ?", results[i].ApplicationID).Find(&results[i].Applications).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UserID).Find(&results[i].Users).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+		}
+	}
+	return
+}
+
+// FetchIndexByApplicationUserFkUpdatedBy  获取多个内容
+func (obj *_ApplicationUserMgr) FetchIndexByApplicationUserFkUpdatedBy(updatedBy string) (results []*ApplicationUser, err error) {
+	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`updated_by` = ?", updatedBy).Find(&results).Error
+	if err == nil && obj.isRelated {
+		for i := 0; i < len(results); i++ {
+			if err = obj.New().Table("applications").Where("id = ?", results[i].ApplicationID).Find(&results[i].Applications).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UserID).Find(&results[i].Users).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
 				if err != gorm.ErrRecordNotFound { // 非 没找到
 					return
 				}
