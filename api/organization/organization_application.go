@@ -5,7 +5,6 @@ import (
 	"github.com/svcodestore/sv-sso-gin/model"
 	"github.com/svcodestore/sv-sso-gin/model/common/response"
 	"github.com/svcodestore/sv-sso-gin/service"
-	"strconv"
 )
 
 var organizationApplicationService = service.ServiceGroup.OrganizationApplicationService
@@ -14,7 +13,7 @@ func CreateOrganizationApplication(c *gin.Context) {
 	organizationId := c.PostForm("organizationId")
 	applicationId := c.PostForm("applicationId")
 	currentUserId := c.PostForm("currentUserId")
-	uid, _ := strconv.ParseInt(currentUserId, 10, 64)
+	uid := currentUserId
 
 	organizationApplication, err := organizationApplicationService.CreateOrganizationApplication(&model.OrganizationApplication{
 		OrganizationID: organizationId,
@@ -48,7 +47,7 @@ func UpdateOrganizationApplicationById(c *gin.Context) {
 	organizationId := c.PostForm("organizationId")
 	applicationId := c.PostForm("applicationId")
 	currentUserId := c.PostForm("currentUserId")
-	uid, _ := strconv.ParseInt(currentUserId, 10, 64)
+	uid := currentUserId
 
 	organizationApplication, err := organizationApplicationService.UpdateOrganizationApplicationWithId(&model.OrganizationApplication{
 		OrganizationID: organizationId,

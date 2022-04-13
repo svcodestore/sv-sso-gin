@@ -5,14 +5,13 @@ import (
 	"github.com/svcodestore/sv-sso-gin/model"
 	"github.com/svcodestore/sv-sso-gin/model/common/response"
 	"github.com/svcodestore/sv-sso-gin/service"
-	"strconv"
 )
 
 var applicationService = service.ServiceGroup.ApplicationService
 
 func CreateApplication(c *gin.Context) {
 	currentUserId := c.PostForm("currentUserId")
-	uid, _ := strconv.ParseInt(currentUserId, 10, 64)
+	uid := currentUserId
 
 	code := c.PostForm("code")
 	name := c.PostForm("name")
@@ -23,11 +22,11 @@ func CreateApplication(c *gin.Context) {
 	tokenFormat := c.DefaultPostForm("tokenFormat", "JWT")
 
 	application, err := applicationService.CreateApplication(&model.Applications{
-		Code:        code,
-		Name:        name,
-		InternalURL: internalUrl,
-		HomepageURL: homepageUrl,
-		Status:      status == "true",
+		Code:         code,
+		Name:         name,
+		InternalURL:  internalUrl,
+		HomepageURL:  homepageUrl,
+		Status:       status == "true",
 		RedirectURIs: redirectUris,
 		TokenFormat:  tokenFormat,
 		CreatedBy:    uid,
@@ -54,7 +53,7 @@ func DeleteApplicationById(c *gin.Context) {
 func UpdateApplicationById(c *gin.Context) {
 	id := c.Param("id")
 	currentUserId := c.PostForm("currentUserId")
-	uid, _ := strconv.ParseInt(currentUserId, 10, 64)
+	uid := currentUserId
 
 	code := c.PostForm("code")
 	name := c.PostForm("name")
@@ -65,7 +64,7 @@ func UpdateApplicationById(c *gin.Context) {
 	tokenFormat := c.DefaultPostForm("tokenFormat", "JWT")
 
 	updatingApplication := &model.Applications{
-		ID: id,
+		ID:        id,
 		UpdatedBy: uid,
 	}
 

@@ -5,7 +5,6 @@ import (
 	"github.com/svcodestore/sv-sso-gin/model"
 	"github.com/svcodestore/sv-sso-gin/model/common/response"
 	"github.com/svcodestore/sv-sso-gin/service"
-	"strconv"
 )
 
 var userService = service.ServiceGroup.UserService
@@ -28,7 +27,7 @@ func RegisterUser(c *gin.Context) {
 		Password:  password,
 		Name:      name,
 		Lang:      lang,
-		UpdatedBy: -1,
+		UpdatedBy: "-1",
 	})
 
 	if err != nil {
@@ -40,7 +39,7 @@ func RegisterUser(c *gin.Context) {
 
 func CreateUser(c *gin.Context) {
 	currentUserId := c.PostForm("currentUserId")
-	uid, _ := strconv.ParseInt(currentUserId, 10, 64)
+	uid := currentUserId
 	loginId := c.PostForm("loginId")
 	password := c.PostForm("password")
 	name := c.PostForm("name")
@@ -63,7 +62,7 @@ func CreateUser(c *gin.Context) {
 func UpdateUser(c *gin.Context) {
 	id := c.Param("id")
 	currentUserId := c.PostForm("currentUserId")
-	uid, _ := strconv.ParseInt(currentUserId, 10, 64)
+	uid := currentUserId
 
 	loginId := c.PostForm("loginId")
 	password := c.PostForm("password")
