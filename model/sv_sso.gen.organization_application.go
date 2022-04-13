@@ -88,12 +88,12 @@ func (obj *_OrganizationApplicationMgr) Gets() (results []*OrganizationApplicati
 //////////////////////////option case ////////////////////////////////////////////
 
 // WithOrganizationID organization_id获取
-func (obj *_OrganizationApplicationMgr) WithOrganizationID(organizationID int64) Option {
+func (obj *_OrganizationApplicationMgr) WithOrganizationID(organizationID string) Option {
 	return optionFunc(func(o *options) { o.query["organization_id"] = organizationID })
 }
 
 // WithApplicationID application_id获取
-func (obj *_OrganizationApplicationMgr) WithApplicationID(applicationID int64) Option {
+func (obj *_OrganizationApplicationMgr) WithApplicationID(applicationID string) Option {
 	return optionFunc(func(o *options) { o.query["application_id"] = applicationID })
 }
 
@@ -108,7 +108,7 @@ func (obj *_OrganizationApplicationMgr) WithCreatedAt(createdAt time.Time) Optio
 }
 
 // WithCreatedBy created_by获取
-func (obj *_OrganizationApplicationMgr) WithCreatedBy(createdBy int64) Option {
+func (obj *_OrganizationApplicationMgr) WithCreatedBy(createdBy string) Option {
 	return optionFunc(func(o *options) { o.query["created_by"] = createdBy })
 }
 
@@ -118,7 +118,7 @@ func (obj *_OrganizationApplicationMgr) WithUpdatedAt(updatedAt time.Time) Optio
 }
 
 // WithUpdatedBy updated_by获取
-func (obj *_OrganizationApplicationMgr) WithUpdatedBy(updatedBy int64) Option {
+func (obj *_OrganizationApplicationMgr) WithUpdatedBy(updatedBy string) Option {
 	return optionFunc(func(o *options) { o.query["updated_by"] = updatedBy })
 }
 
@@ -198,7 +198,7 @@ func (obj *_OrganizationApplicationMgr) GetByOptions(opts ...Option) (results []
 //////////////////////////enume case ////////////////////////////////////////////
 
 // GetFromOrganizationID 通过organization_id获取内容
-func (obj *_OrganizationApplicationMgr) GetFromOrganizationID(organizationID int64) (results []*OrganizationApplication, err error) {
+func (obj *_OrganizationApplicationMgr) GetFromOrganizationID(organizationID string) (results []*OrganizationApplication, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`organization_id` = ?", organizationID).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -228,7 +228,7 @@ func (obj *_OrganizationApplicationMgr) GetFromOrganizationID(organizationID int
 }
 
 // GetBatchFromOrganizationID 批量查找
-func (obj *_OrganizationApplicationMgr) GetBatchFromOrganizationID(organizationIDs []int64) (results []*OrganizationApplication, err error) {
+func (obj *_OrganizationApplicationMgr) GetBatchFromOrganizationID(organizationIDs []string) (results []*OrganizationApplication, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`organization_id` IN (?)", organizationIDs).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -258,7 +258,7 @@ func (obj *_OrganizationApplicationMgr) GetBatchFromOrganizationID(organizationI
 }
 
 // GetFromApplicationID 通过application_id获取内容
-func (obj *_OrganizationApplicationMgr) GetFromApplicationID(applicationID int64) (results []*OrganizationApplication, err error) {
+func (obj *_OrganizationApplicationMgr) GetFromApplicationID(applicationID string) (results []*OrganizationApplication, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`application_id` = ?", applicationID).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -288,7 +288,7 @@ func (obj *_OrganizationApplicationMgr) GetFromApplicationID(applicationID int64
 }
 
 // GetBatchFromApplicationID 批量查找
-func (obj *_OrganizationApplicationMgr) GetBatchFromApplicationID(applicationIDs []int64) (results []*OrganizationApplication, err error) {
+func (obj *_OrganizationApplicationMgr) GetBatchFromApplicationID(applicationIDs []string) (results []*OrganizationApplication, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`application_id` IN (?)", applicationIDs).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -438,7 +438,7 @@ func (obj *_OrganizationApplicationMgr) GetBatchFromCreatedAt(createdAts []time.
 }
 
 // GetFromCreatedBy 通过created_by获取内容
-func (obj *_OrganizationApplicationMgr) GetFromCreatedBy(createdBy int64) (results []*OrganizationApplication, err error) {
+func (obj *_OrganizationApplicationMgr) GetFromCreatedBy(createdBy string) (results []*OrganizationApplication, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`created_by` = ?", createdBy).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -468,7 +468,7 @@ func (obj *_OrganizationApplicationMgr) GetFromCreatedBy(createdBy int64) (resul
 }
 
 // GetBatchFromCreatedBy 批量查找
-func (obj *_OrganizationApplicationMgr) GetBatchFromCreatedBy(createdBys []int64) (results []*OrganizationApplication, err error) {
+func (obj *_OrganizationApplicationMgr) GetBatchFromCreatedBy(createdBys []string) (results []*OrganizationApplication, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`created_by` IN (?)", createdBys).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -558,7 +558,7 @@ func (obj *_OrganizationApplicationMgr) GetBatchFromUpdatedAt(updatedAts []time.
 }
 
 // GetFromUpdatedBy 通过updated_by获取内容
-func (obj *_OrganizationApplicationMgr) GetFromUpdatedBy(updatedBy int64) (results []*OrganizationApplication, err error) {
+func (obj *_OrganizationApplicationMgr) GetFromUpdatedBy(updatedBy string) (results []*OrganizationApplication, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`updated_by` = ?", updatedBy).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -588,7 +588,7 @@ func (obj *_OrganizationApplicationMgr) GetFromUpdatedBy(updatedBy int64) (resul
 }
 
 // GetBatchFromUpdatedBy 批量查找
-func (obj *_OrganizationApplicationMgr) GetBatchFromUpdatedBy(updatedBys []int64) (results []*OrganizationApplication, err error) {
+func (obj *_OrganizationApplicationMgr) GetBatchFromUpdatedBy(updatedBys []string) (results []*OrganizationApplication, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`updated_by` IN (?)", updatedBys).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -620,7 +620,7 @@ func (obj *_OrganizationApplicationMgr) GetBatchFromUpdatedBy(updatedBys []int64
 //////////////////////////primary index case ////////////////////////////////////////////
 
 // FetchByPrimaryKey primary or index 获取唯一内容
-func (obj *_OrganizationApplicationMgr) FetchByPrimaryKey(organizationID int64, applicationID int64) (result OrganizationApplication, err error) {
+func (obj *_OrganizationApplicationMgr) FetchByPrimaryKey(organizationID string, applicationID string) (result OrganizationApplication, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`organization_id` = ? AND `application_id` = ?", organizationID, applicationID).Find(&result).Error
 	if err == nil && obj.isRelated {
 		if err = obj.New().Table("organizations").Where("id = ?", result.OrganizationID).Find(&result.Organizations).Error; err != nil { //
@@ -649,7 +649,7 @@ func (obj *_OrganizationApplicationMgr) FetchByPrimaryKey(organizationID int64, 
 }
 
 // FetchIndexByOrganizationApplicationOrganizationIDIndex  获取多个内容
-func (obj *_OrganizationApplicationMgr) FetchIndexByOrganizationApplicationOrganizationIDIndex(organizationID int64) (results []*OrganizationApplication, err error) {
+func (obj *_OrganizationApplicationMgr) FetchIndexByOrganizationApplicationOrganizationIDIndex(organizationID string) (results []*OrganizationApplication, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`organization_id` = ?", organizationID).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -679,7 +679,7 @@ func (obj *_OrganizationApplicationMgr) FetchIndexByOrganizationApplicationOrgan
 }
 
 // FetchIndexByOrganizationApplicationApplicationIDIndex  获取多个内容
-func (obj *_OrganizationApplicationMgr) FetchIndexByOrganizationApplicationApplicationIDIndex(applicationID int64) (results []*OrganizationApplication, err error) {
+func (obj *_OrganizationApplicationMgr) FetchIndexByOrganizationApplicationApplicationIDIndex(applicationID string) (results []*OrganizationApplication, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`application_id` = ?", applicationID).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -709,7 +709,7 @@ func (obj *_OrganizationApplicationMgr) FetchIndexByOrganizationApplicationAppli
 }
 
 // FetchIndexByOrganizationApplicationFkCreatedBy  获取多个内容
-func (obj *_OrganizationApplicationMgr) FetchIndexByOrganizationApplicationFkCreatedBy(createdBy int64) (results []*OrganizationApplication, err error) {
+func (obj *_OrganizationApplicationMgr) FetchIndexByOrganizationApplicationFkCreatedBy(createdBy string) (results []*OrganizationApplication, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`created_by` = ?", createdBy).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -739,7 +739,7 @@ func (obj *_OrganizationApplicationMgr) FetchIndexByOrganizationApplicationFkCre
 }
 
 // FetchIndexByOrganizationApplicationFkUpdatedBy  获取多个内容
-func (obj *_OrganizationApplicationMgr) FetchIndexByOrganizationApplicationFkUpdatedBy(updatedBy int64) (results []*OrganizationApplication, err error) {
+func (obj *_OrganizationApplicationMgr) FetchIndexByOrganizationApplicationFkUpdatedBy(updatedBy string) (results []*OrganizationApplication, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`updated_by` = ?", updatedBy).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {

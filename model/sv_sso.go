@@ -103,9 +103,9 @@ var ApplicationsColumns = struct {
 
 // OrganizationApplication [...]
 type OrganizationApplication struct {
-	OrganizationID int64               `gorm:"primaryKey;index:organization_application_organization_id_index;column:organization_id;type:bigint;not null" json:"-"`
+	OrganizationID string              `gorm:"primaryKey;index:organization_application_organization_id_index;column:organization_id;type:bigint;not null" json:"-"`
 	Organizations  Organizations       `gorm:"joinForeignKey:organization_id;foreignKey:OrganizationID;reference:OrganizationID" json:"organizationsList"`
-	ApplicationID  int64               `gorm:"primaryKey;index:organization_application_application_id_index;column:application_id;type:bigint;not null" json:"-"`
+	ApplicationID  string              `gorm:"primaryKey;index:organization_application_application_id_index;column:application_id;type:bigint;not null" json:"-"`
 	Applications   Applications        `gorm:"joinForeignKey:application_id;foreignKey:ApplicationID;reference:ApplicationID" json:"applicationsList"`
 	Status         bool                `gorm:"column:status;type:tinyint(1);not null;default:1" json:"status"`
 	CreatedAt      time.Time           `gorm:"column:created_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"createdAt"`

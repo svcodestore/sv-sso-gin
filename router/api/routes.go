@@ -30,6 +30,11 @@ func (*Routes) Init(g *gin.RouterGroup) {
 
 	organizationApplicationsG := g.Group("organization-applications")
 	organizationApplicationsG.GET("", organization.GetAllOrganizationApplication)
+	organizationApplicationG := g.Group("organization-application")
+	organizationApplicationG.POST("", organization.CreateOrganizationApplication)
+	organizationApplicationG.DELETE("", organization.DeleteOrganizationApplicationById)
+	organizationApplicationG.GET("", organization.GetOrganizationApplicationById)
+	organizationApplicationG.PATCH("", organization.UpdateOrganizationApplicationById)
 
 	applicationsG := g.Group("applications")
 	applicationsG.GET("", application.AllApplication)
