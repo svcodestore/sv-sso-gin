@@ -6,16 +6,16 @@ import (
 
 // ApplicationUser [...]
 type ApplicationUser struct {
-	ApplicationID int64               `gorm:"primaryKey;index:application_user_application_id_index;column:application_id;type:bigint;not null" json:"-"`
+	ApplicationID string              `gorm:"primaryKey;index:application_user_application_id_index;column:application_id;type:bigint;not null" json:"-"`
 	Applications  Applications        `gorm:"joinForeignKey:application_id;foreignKey:ApplicationID;reference:ApplicationID" json:"applicationsList"`
-	UserID        int64               `gorm:"primaryKey;index:application_user_user_id_index;column:user_id;type:bigint;not null" json:"-"`
+	UserID        string              `gorm:"primaryKey;index:application_user_user_id_index;column:user_id;type:bigint;not null" json:"-"`
 	Users         UsersWithoutModInfo `gorm:"joinForeignKey:user_id;foreignKey:UserID;reference:UserID" json:"usersList"`
 	Status        bool                `gorm:"column:status;type:tinyint(1);not null;default:1" json:"status"`
 	CreatedAt     time.Time           `gorm:"column:created_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"createdAt"`
-	CreatedBy     int64               `gorm:"column:created_by;type:bigint;not null" json:"-"`
+	CreatedBy     string              `gorm:"column:created_by;type:bigint;not null" json:"-"`
 	CreatedByUser UsersWithoutModInfo `gorm:"joinForeignKey:created_by;foreignKey:CreatedBy;reference:CreatedBy" json:"createdByUser"`
 	UpdatedAt     time.Time           `gorm:"column:updated_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"updatedAt"`
-	UpdatedBy     int64               `gorm:"column:updated_by;type:bigint;not null" json:"-"`
+	UpdatedBy     string              `gorm:"column:updated_by;type:bigint;not null" json:"-"`
 	UpdatedByUser UsersWithoutModInfo `gorm:"joinForeignKey:created_by;foreignKey:UpdatedBy;reference:UpdatedBy" json:"updatedByUser"`
 }
 
@@ -56,10 +56,10 @@ type Applications struct {
 	RedirectURIs  string              `gorm:"column:redirect_uris;type:varchar(255)" json:"redirectUris"`
 	TokenFormat   string              `gorm:"column:token_format;type:varchar(100);default:JWT" json:"tokenFormat"`
 	CreatedAt     time.Time           `gorm:"column:created_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"createdAt"`
-	CreatedBy     int64               `gorm:"column:created_by;type:bigint;not null" json:"-"`
+	CreatedBy     string              `gorm:"column:created_by;type:bigint;not null" json:"-"`
 	CreatedByUser UsersWithoutModInfo `gorm:"joinForeignKey:created_by;foreignKey:CreatedBy;reference:CreatedBy" json:"createdByUser"`
 	UpdatedAt     time.Time           `gorm:"column:updated_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"updatedAt"`
-	UpdatedBy     int64               `gorm:"column:updated_by;type:bigint;not null" json:"-"`
+	UpdatedBy     string              `gorm:"column:updated_by;type:bigint;not null" json:"-"`
 	UpdatedByUser UsersWithoutModInfo `gorm:"joinForeignKey:created_by;foreignKey:UpdatedBy;reference:UpdatedBy" json:"updatedByUser"`
 }
 
@@ -109,10 +109,10 @@ type OrganizationApplication struct {
 	Applications   Applications        `gorm:"joinForeignKey:application_id;foreignKey:ApplicationID;reference:ApplicationID" json:"applicationsList"`
 	Status         bool                `gorm:"column:status;type:tinyint(1);not null;default:1" json:"status"`
 	CreatedAt      time.Time           `gorm:"column:created_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"createdAt"`
-	CreatedBy      int64               `gorm:"column:created_by;type:bigint;not null" json:"-"`
+	CreatedBy      string              `gorm:"column:created_by;type:bigint;not null" json:"-"`
 	CreatedByUser  UsersWithoutModInfo `gorm:"joinForeignKey:created_by;foreignKey:CreatedBy;reference:CreatedBy" json:"createdByUser"`
 	UpdatedAt      time.Time           `gorm:"column:updated_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"updatedAt"`
-	UpdatedBy      int64               `gorm:"column:updated_by;type:bigint;not null" json:"-"`
+	UpdatedBy      string              `gorm:"column:updated_by;type:bigint;not null" json:"-"`
 	UpdatedByUser  UsersWithoutModInfo `gorm:"joinForeignKey:created_by;foreignKey:UpdatedBy;reference:UpdatedBy" json:"updatedByUser"`
 }
 
@@ -147,10 +147,10 @@ type Organizations struct {
 	Name          string              `gorm:"column:name;type:varchar(255)" json:"name"`
 	Status        bool                `gorm:"column:status;type:tinyint(1);not null;default:1" json:"status"`
 	CreatedAt     time.Time           `gorm:"column:created_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"createdAt"`
-	CreatedBy     int64               `gorm:"column:created_by;type:bigint;not null" json:"-"`
+	CreatedBy     string              `gorm:"column:created_by;type:bigint;not null" json:"-"`
 	CreatedByUser UsersWithoutModInfo `gorm:"joinForeignKey:created_by;foreignKey:CreatedBy;reference:CreatedBy" json:"createdByUser"`
 	UpdatedAt     time.Time           `gorm:"column:updated_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"updatedAt"`
-	UpdatedBy     int64               `gorm:"column:updated_by;type:bigint;not null" json:"-"`
+	UpdatedBy     string              `gorm:"column:updated_by;type:bigint;not null" json:"-"`
 	UpdatedByUser UsersWithoutModInfo `gorm:"joinForeignKey:created_by;foreignKey:UpdatedBy;reference:UpdatedBy" json:"updatedByUser"`
 }
 
@@ -193,9 +193,9 @@ var OrganizationsColumns = struct {
 //	Lang      string    `gorm:"column:lang;type:char(5);default:zh_CN" json:"lang"`
 //	Status    bool      `gorm:"column:status;type:tinyint(1);not null;default:1" json:"status"`
 //	CreatedAt time.Time `gorm:"column:created_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"createdAt"`
-//	CreatedBy int64     `gorm:"column:created_by;type:bigint;not null" json:"createdBy"`
+//	CreatedBy string     `gorm:"column:created_by;type:bigint;not null" json:"createdBy"`
 //	UpdatedAt time.Time `gorm:"column:updated_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"updatedAt"`
-//	UpdatedBy int64     `gorm:"column:updated_by;type:bigint;not null" json:"updatedBy"`
+//	UpdatedBy string     `gorm:"column:updated_by;type:bigint;not null" json:"updatedBy"`
 //}
 
 // TableName get sql table name.获取数据库表名
