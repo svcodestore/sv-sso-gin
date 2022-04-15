@@ -98,7 +98,7 @@ func UpdateApplicationById(c *gin.Context) {
 	}
 }
 
-func AllApplication(c *gin.Context) {
+func GetAllApplication(c *gin.Context) {
 	applications, err := applicationService.AllApplication()
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
@@ -116,3 +116,4 @@ func GetApplicationById(c *gin.Context) {
 		response.OkWithData(application, c)
 	}
 }
+

@@ -10,6 +10,7 @@ type Group struct {
 	OrganizationService            system.OrganizationService
 	ApplicationService             system.ApplicationService
 	OrganizationApplicationService system.OrganizationApplicationService
+	ApplicationUserService         system.ApplicationUserService
 }
 
 var ServiceGroup = new(Group)
