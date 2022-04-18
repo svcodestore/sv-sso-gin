@@ -2,12 +2,14 @@ package system
 
 import (
 	"context"
+	"github.com/golang-jwt/jwt/v4"
+	"go.uber.org/zap"
+	"time"
+
 	"github.com/svcodestore/sv-sso-gin/global"
 	"github.com/svcodestore/sv-sso-gin/model/system"
 	"github.com/svcodestore/sv-sso-gin/model/system/request"
 	"github.com/svcodestore/sv-sso-gin/utils"
-	"go.uber.org/zap"
-	"time"
 )
 
 type JwtService struct{}
@@ -65,13 +67,34 @@ func (jwtService *JwtService) SetRedisJWT(jwt string, userName string) (err erro
 	return err
 }
 
-func (jwtService JwtService) GenerateToken(c request.BaseClaims) (token string, expireAt int64, err error) {
+func (jwtService *JwtService) GenerateToken(c request.BaseClaims) (accessToken, refreshToken string, err error) {
+	nowTime := time.Now()
+	expireTime := nowTime.Add(time.Duration(168) * time.Hour)
+	refreshExpireTime := nowTime.Add(time.Duration(720) * time.Hour)
+	origin := global.CONFIG.JWT.Issuer
+
 	j := &utils.JWT{
 		SigningKey: []byte(global.CONFIG.JWT.SigningKey),
 	}
-	claims := j.CreateClaims(c)
-	token, err = j.CreateToken(claims)
-	expireAt = claims.RegisteredClaims.ExpiresAt.Unix()
+	claims := request.CustomClaims{
+		BaseClaims: c,
+		BufferTime: 86400,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ID:        c.LoginId,
+			Issuer:    origin,
+			Subject:   c.LoginId,
+			Audience:  []string{c.ClientId},
+			ExpiresAt: jwt.NewNumericDate(expireTime),
+			NotBefore: jwt.NewNumericDate(nowTime),
+			IssuedAt:  jwt.NewNumericDate(nowTime),
+		},
+	}
+	accessToken, err = j.CreateToken(claims)
+	if err != nil {
+		return
+	}
+	claims.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
+	refreshToken, err = j.CreateToken(claims)
 	return
 }
 

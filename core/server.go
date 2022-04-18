@@ -2,10 +2,11 @@ package core
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/svcodestore/sv-sso-gin/global"
 	"github.com/svcodestore/sv-sso-gin/initialize"
 	"github.com/svcodestore/sv-sso-gin/model"
-	"log"
 )
 
 type server interface {
@@ -30,6 +31,9 @@ func RunServer() {
 		}
 		defer db.Close()
 	}
+
+	initialize.Redis()
+
 	routers := initialize.Routers()
 
 	address := fmt.Sprintf(":%d", global.CONFIG.System.Addr)

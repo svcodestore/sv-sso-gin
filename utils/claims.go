@@ -23,11 +23,11 @@ func GetUserID(c *gin.Context) string {
 		if cl, err := GetClaims(c); err != nil {
 			return ""
 		} else {
-			return cl.BaseClaims.ID
+			return cl.BaseClaims.UserId
 		}
 	} else {
 		waitUse := claims.(*request.CustomClaims)
-		return waitUse.BaseClaims.ID
+		return waitUse.BaseClaims.UserId
 	}
 }
 
@@ -51,11 +51,11 @@ func GetUserAuthorityId(c *gin.Context) string {
 		if cl, err := GetClaims(c); err != nil {
 			return ""
 		} else {
-			return cl.AuthorityId
+			return cl.UserId
 		}
 	} else {
 		waitUse := claims.(*request.CustomClaims)
-		return waitUse.AuthorityId
+		return waitUse.UserId
 	}
 }
 

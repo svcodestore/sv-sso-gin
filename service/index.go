@@ -11,6 +11,7 @@ type Group struct {
 	ApplicationService             system.ApplicationService
 	OrganizationApplicationService system.OrganizationApplicationService
 	ApplicationUserService         system.ApplicationUserService
+	OauthService                   system.OauthService
 }
 
 var ServiceGroup = new(Group)

@@ -18,7 +18,7 @@ func CasbinCheck() gin.HandlerFunc {
 		// 获取请求方法
 		act := c.Request.Method
 		// 获取用户的角色
-		sub := waitUse.AuthorityId
+		sub := waitUse.UserId
 		e := casbinService.Casbin()
 		// 判断策略中是否存在
 		success, _ := e.Enforce(sub, obj, act)

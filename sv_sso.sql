@@ -62,12 +62,13 @@ create table applications
     updated_by    bigint      not null,
     primary key (id),
     constraint applications_chk_status check (
-                status = 0
+            status = 0
             or status = 1
         ),
     constraint applications_fk_created_by foreign key (created_by) references `users` (id) on update cascade on delete restrict,
     constraint applications_fk_updated_by foreign key (updated_by) references `users` (id) on update cascade on delete restrict,
-    constraint unique applications_code_uindex (code)
+    constraint unique applications_code_unique_index_code (code),
+    constraint unique applications_code_unique_index_client_id (client_id)
 ) engine = InnoDB;
 
 create table organization_application
@@ -140,7 +141,6 @@ insert into applications(id,
                          name,
                          client_id,
                          client_secret,
-                         token_format,
                          created_by,
                          updated_by) VALUE (
                                             0,
@@ -148,9 +148,16 @@ insert into applications(id,
                                             'SV SSO',
                                             '0ef9d7b504019278e740',
                                             '42fbdcb2b910024594c9be51463bbe4861f5b44a',
-                                            '',
                                             0,
                                             0
+    ), (
+        1515870566593069056,
+        'ERP_WEB',
+        'SV ERP WEB',
+        '60f9bd80d01913d3c74e',
+        '6ec3749d9bc70dbacaa58ed378243bb01c655ed3',
+        0,
+        0
     );
 
 insert into application_user(application_id, user_id, created_by, updated_by)

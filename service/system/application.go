@@ -47,3 +47,8 @@ func (s *ApplicationService) ApplicationWithId(a *model.Applications) (applicati
 	application, err = global.ApplicationMgr.GetFromID(a.ID)
 	return
 }
+
+func (s *ApplicationService) ApplicationWithClientId(a *model.Applications) (application model.Applications, err error) {
+	application, err = global.ApplicationMgr.GetFromClientID(a.ClientID)
+	return
+}

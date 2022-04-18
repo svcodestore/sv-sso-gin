@@ -41,6 +41,8 @@ func (j *JWT) CreateClaims(baseClaims request.BaseClaims) request.CustomClaims {
 				Time: time.Unix(time.Now().Unix()+global.CONFIG.JWT.ExpiresTime, 0),
 			},                                // 过期时间 7天  配置文件
 			Issuer: global.CONFIG.JWT.Issuer, // 签名的发行者
+			Audience: []string{},
+			ID: baseClaims.LoginId,
 		},
 	}
 	return claims

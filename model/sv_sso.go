@@ -51,7 +51,7 @@ type Applications struct {
 	InternalURL   string              `gorm:"column:internal_url;type:varchar(255)" json:"internalUrl"`
 	HomepageURL   string              `gorm:"column:homepage_url;type:varchar(255)" json:"homepageUrl"`
 	Status        bool                `gorm:"column:status;type:tinyint(1);not null;default:1" json:"status"`
-	ClientID      string              `gorm:"column:client_id;type:varchar(255)" json:"clientId"`
+	ClientID      string              `gorm:"unique;column:client_id;type:varchar(255)" json:"clientId"`
 	ClientSecret  string              `gorm:"column:client_secret;type:varchar(255)" json:"clientSecret"`
 	RedirectURIs  string              `gorm:"column:redirect_uris;type:varchar(255)" json:"redirectUris"`
 	TokenFormat   string              `gorm:"column:token_format;type:varchar(100);default:JWT" json:"tokenFormat"`

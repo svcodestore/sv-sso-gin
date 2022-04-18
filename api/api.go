@@ -21,25 +21,27 @@ func Login(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 	loginType := c.PostForm("type")
+	ClientId := c.PostForm("clientId")
 
 	if username != "" {
 		if loginType == "login" {
 			if user, err := userService.Login(username, password); err != nil {
 				response.FailWithMessage(err.Error(), c)
 			} else {
-				token, expireAt, err := jwtService.GenerateToken(request.BaseClaims{
-					UUID:        user.UUID,
-					ID:          user.ID,
-					Username:    user.Name,
-					AuthorityId: user.LoginID,
+				accessToken, refreshToken, err := jwtService.GenerateToken(request.BaseClaims{
+					UUID:     user.UUID,
+					UserId:   user.ID,
+					Username: user.Name,
+					LoginId:  user.LoginID,
+					ClientId: ClientId,
 				})
 				if err != nil {
 					response.FailWithMessage(err.Error(), c)
 				} else {
 					response.OkWithData(gin.H{
-						"user":        user,
-						"accessToken": token,
-						"expireAt":    expireAt,
+						"user":         user,
+						"accessToken":  accessToken,
+						"refreshToken": refreshToken,
 					}, c)
 				}
 			}

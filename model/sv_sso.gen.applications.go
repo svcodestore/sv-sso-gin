@@ -431,22 +431,21 @@ func (obj *_ApplicationsMgr) GetBatchFromStatus(statuss []bool) (results []*Appl
 }
 
 // GetFromClientID 通过client_id获取内容
-func (obj *_ApplicationsMgr) GetFromClientID(clientID string) (results []*Applications, err error) {
-	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`client_id` = ?", clientID).Find(&results).Error
+func (obj *_ApplicationsMgr) GetFromClientID(clientID string) (result Applications, err error) {
+	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`client_id` = ?", clientID).Find(&result).Error
 	if err == nil && obj.isRelated {
-		for i := 0; i < len(results); i++ {
-			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
-				if err != gorm.ErrRecordNotFound { // 非 没找到
-					return
-				}
+		if err = obj.New().Table("users").Where("id = ?", result.CreatedBy).Find(&result.CreatedByUser).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
 			}
-			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
-				if err != gorm.ErrRecordNotFound { // 非 没找到
-					return
-				}
+		}
+		if err = obj.New().Table("users").Where("id = ?", result.UpdatedBy).Find(&result.UpdatedByUser).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
 			}
 		}
 	}
+
 	return
 }
 
@@ -771,9 +770,28 @@ func (obj *_ApplicationsMgr) FetchByPrimaryKey(id string) (result Applications, 
 	return
 }
 
-// FetchUniqueByApplicationsCodeUIndex primary or index 获取唯一内容
-func (obj *_ApplicationsMgr) FetchUniqueByApplicationsCodeUIndex(code string) (result Applications, err error) {
+// FetchUniqueByApplicationsCodeUniqueIndexCode primary or index 获取唯一内容
+func (obj *_ApplicationsMgr) FetchUniqueByApplicationsCodeUniqueIndexCode(code string) (result Applications, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`code` = ?", code).Find(&result).Error
+	if err == nil && obj.isRelated {
+		if err = obj.New().Table("users").Where("id = ?", result.CreatedBy).Find(&result.CreatedByUser).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
+			}
+		}
+		if err = obj.New().Table("users").Where("id = ?", result.UpdatedBy).Find(&result.UpdatedByUser).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
+			}
+		}
+	}
+
+	return
+}
+
+// FetchUniqueByApplicationsCodeUniqueIndexClientID primary or index 获取唯一内容
+func (obj *_ApplicationsMgr) FetchUniqueByApplicationsCodeUniqueIndexClientID(clientID string) (result Applications, err error) {
+	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`client_id` = ?", clientID).Find(&result).Error
 	if err == nil && obj.isRelated {
 		if err = obj.New().Table("users").Where("id = ?", result.CreatedBy).Find(&result.CreatedByUser).Error; err != nil { //
 			if err != gorm.ErrRecordNotFound { // 非 没找到
