@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/svcodestore/sv-sso-gin/model/system/request"
 	"github.com/svcodestore/sv-sso-gin/utils"
+	"strings"
 
 	"github.com/svcodestore/sv-sso-gin/model"
 	"github.com/svcodestore/sv-sso-gin/model/common/response"
@@ -25,10 +26,15 @@ func GetGrantCode(c *gin.Context) {
 	//state := c.PostForm("state")
 
 	if responseType == "code" {
+		t := strings.Split(c.GetHeader("Authorization"), " ")
+		token := t[1]
+		j := utils.NewJWT()
+		claims, err := j.ParseToken(token)
+
 		application, err := applicationService.ApplicationWithClientId(&model.Applications{ClientID: clientId})
 		if application.ClientID == clientId {
 			grantedCode := oauthService.GenerateGrantCode()
-			_, err = oauthService.SaveGrantedCodeToRedis(clientId, grantedCode)
+			_, err = oauthService.SaveGrantedCodeToRedis(claims.UserId, clientId, grantedCode)
 			if err == nil {
 				response.OkWithData(gin.H{
 					"code": grantedCode,
@@ -49,7 +55,7 @@ func GetOauthCode(c *gin.Context) {
 
 	if grantType == "authorization_code" {
 		if code == "" {
-			response.UnAuth(c)
+			response.UnAuthWithMessage("empty code", c)
 			return
 		}
 		application, err := applicationService.ApplicationWithClientId(&model.Applications{ClientID: clientId})
@@ -58,7 +64,7 @@ func GetOauthCode(c *gin.Context) {
 			return
 		}
 		if redirectUri != application.RedirectURIs {
-			response.UnAuthWithMessage("redirect uri error", c)
+			response.UnAuthWithMessage("redirect uri " + redirectUri + " error", c)
 			return
 		}
 
@@ -75,6 +81,7 @@ func GetOauthCode(c *gin.Context) {
 			}
 
 			if utils.IsExpire(expireAt) {
+				oauthService.DeleteGrantCodeByClientId(clientId)
 				response.UnAuthWithMessage("expired code", c)
 				return
 			}

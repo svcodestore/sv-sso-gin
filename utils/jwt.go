@@ -2,10 +2,12 @@ package utils
 
 import (
 	"errors"
+	"time"
+
 	jwt "github.com/golang-jwt/jwt/v4"
+
 	"github.com/svcodestore/sv-sso-gin/global"
 	"github.com/svcodestore/sv-sso-gin/model/system/request"
-	"time"
 )
 
 type JWT struct {
@@ -32,17 +34,16 @@ type nubericDate struct {
 func (j *JWT) CreateClaims(baseClaims request.BaseClaims) request.CustomClaims {
 	claims := request.CustomClaims{
 		BaseClaims: baseClaims,
-		BufferTime: global.CONFIG.JWT.BufferTime, // 缓冲时间1天 缓冲时间内会获得新的token刷新令牌 此时一个用户会存在两个有效令牌 但是前端只留一个 另一个会丢失
 		RegisteredClaims: jwt.RegisteredClaims{
 			NotBefore: &jwt.NumericDate{
 				Time: time.Unix(time.Now().Unix()-1000, 0),
 			}, // 签名生效时间
 			ExpiresAt: &jwt.NumericDate{
 				Time: time.Unix(time.Now().Unix()+global.CONFIG.JWT.ExpiresTime, 0),
-			},                                // 过期时间 7天  配置文件
-			Issuer: global.CONFIG.JWT.Issuer, // 签名的发行者
+			}, // 过期时间 7天  配置文件
+			Issuer:   global.CONFIG.JWT.Issuer, // 签名的发行者
 			Audience: []string{},
-			ID: baseClaims.LoginId,
+			ID:       baseClaims.LoginId,
 		},
 	}
 	return claims

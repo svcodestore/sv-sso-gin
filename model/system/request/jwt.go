@@ -7,7 +7,6 @@ import (
 
 type CustomClaims struct {
 	BaseClaims
-	BufferTime int64
 	jwt.RegisteredClaims
 }
 

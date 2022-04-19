@@ -7,4 +7,5 @@ var (
 	//cryptoService       = service.ServiceGroup.CryptoService
 	//casbinService       = service.ServiceGroup.CasbinService
 	jwtService = service.ServiceGroup.JwtService
+	oauthService = service.ServiceGroup.OauthService
 )
