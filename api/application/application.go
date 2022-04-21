@@ -2,6 +2,7 @@ package application
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/svcodestore/sv-sso-gin/global"
 	"github.com/svcodestore/sv-sso-gin/model"
 	"github.com/svcodestore/sv-sso-gin/model/common/response"
 	"github.com/svcodestore/sv-sso-gin/service"
@@ -118,7 +119,7 @@ func GetApplicationById(c *gin.Context) {
 }
 
 func GetCurrentApplication(c *gin.Context) {
-	id := "0"
+	id := global.CONFIG.System.Id
 	application, err := applicationService.ApplicationWithId(&model.Applications{ID: id})
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)

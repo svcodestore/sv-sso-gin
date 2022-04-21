@@ -39,7 +39,7 @@ func (jwtService *JwtService) GenerateToken(c request.BaseClaims) (accessToken, 
 	if err != nil {
 		return
 	}
-	_, err = oauthService.SaveAccessTokenToRedis(accessToken)
+	_, err = oauthService.SaveAccessTokenToRedis(c.UserId, accessToken)
 	if err != nil {
 		return
 	}
@@ -48,6 +48,6 @@ func (jwtService *JwtService) GenerateToken(c request.BaseClaims) (accessToken, 
 	if err != nil {
 		return
 	}
-	_, err = oauthService.SaveRefreshTokenToRedis(refreshToken)
+	_, err = oauthService.SaveRefreshTokenToRedis(c.UserId, refreshToken)
 	return
 }

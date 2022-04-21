@@ -11,10 +11,10 @@ type CustomClaims struct {
 }
 
 type BaseClaims struct {
-	UserId string
-	UUID     uuid.UUID
-	LoginId  string
-	Username string
-	NickName string
-	ClientId string
+	UserId   string    `json:"userId"`
+	UUID     uuid.UUID `json:"uuid"`
+	LoginId  string    `json:"loginId"`
+	Username string    `json:"username"`
+	NickName string    `json:"nickName"`
+	ClientId string    `json:"clientId"`
 }

@@ -14,6 +14,7 @@ redis:
   addr: 127.0.0.1:6379
   password: ""
 system:
+  id:
   env: public
   addr: 8888
   db-type: mysql

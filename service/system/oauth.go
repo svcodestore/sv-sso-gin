@@ -72,37 +72,48 @@ func (s *OauthService) saveTokenToRedis(key, token string) (affected int64, err 
 	return
 }
 
-func (s *OauthService) SaveAccessTokenToRedis(token string) (affected int64, err error) {
-	affected, err = s.saveTokenToRedis(IssuedAccessTokenRedisKey, token)
+func (s *OauthService) SaveAccessTokenToRedis(userId, token string) (affected int64, err error) {
+	k := IssuedAccessTokenRedisKey + ":" + userId
+	affected, err = s.saveTokenToRedis(k, token)
 	return
 }
 
-func (s *OauthService) SaveRefreshTokenToRedis(token string) (affected int64, err error) {
-	affected, err = s.saveTokenToRedis(IssuedRefreshTokenRedisKey, token)
+func (s *OauthService) SaveRefreshTokenToRedis(userId, token string) (affected int64, err error) {
+	k := IssuedRefreshTokenRedisKey + ":" + userId
+	affected, err = s.saveTokenToRedis(k, token)
 	return
 }
 
-func (s OauthService) deleteTokenFromRedis(key string, tokens ...string) (affected int64, err error) {
+func (s OauthService) deleteTokenFromRedis(key string) (affected int64, err error) {
 	ctx := context.Background()
-	affected, err = global.REDIS.SRem(ctx, key, tokens).Result()
+	affected, err = global.REDIS.Del(ctx, key).Result()
 	if err != redis.Nil {
 		err = nil
 	}
 	return
 }
 
-func (s *OauthService) DeleteAccessTokenFromRedis(token string) (affected int64, err error) {
-	affected, err = s.deleteTokenFromRedis(IssuedAccessTokenRedisKey, token)
+func (s *OauthService) DeleteAccessTokenFromRedis(userId string) (affected int64, err error) {
+	k := IssuedAccessTokenRedisKey + ":" + userId
+	affected, err = s.deleteTokenFromRedis(k)
 	return
 }
 
-func (s *OauthService) DeleteRefreshTokenFromRedis(token string) (affected int64, err error) {
-	affected, err = s.deleteTokenFromRedis(IssuedRefreshTokenRedisKey, token)
+func (s *OauthService) DeleteRefreshTokenFromRedis(userId string) (affected int64, err error) {
+	k := IssuedRefreshTokenRedisKey + ":" + userId
+	affected, err = s.deleteTokenFromRedis(k)
 	return
 }
 
-func (s *OauthService) IsUserLogin(token string) (isLogin bool) {
+func (s *OauthService) IsUserLogin(userId string) (isLogin bool) {
 	ctx := context.Background()
-	isLogin, _ = global.REDIS.SIsMember(ctx, IssuedAccessTokenRedisKey, token).Result()
+	k := IssuedAccessTokenRedisKey + ":" + userId
+	count, err := global.REDIS.Exists(ctx, k).Result()
+	if err == nil {
+		if count == 1 {
+			isLogin = true
+			return
+		}
+	}
 	return
 }

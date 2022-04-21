@@ -15,6 +15,7 @@ var oauthService = service.ServiceGroup.OauthService
 func JWTCheck() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.Request.Header.Get("Authorization")
+
 		if token == "" {
 			response.UnAuth(c)
 			c.Abort()
@@ -42,7 +43,7 @@ func JWTCheck() gin.HandlerFunc {
 			return
 		}
 
-		isLogin := oauthService.IsUserLogin(token)
+		isLogin := oauthService.IsUserLogin(claims.UserId)
 
 		if !isLogin {
 			response.UnAuth(c)
