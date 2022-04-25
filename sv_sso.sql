@@ -158,6 +158,15 @@ insert into applications(id,
         '6ec3749d9bc70dbacaa58ed378243bb01c655ed3',
         0,
         0
+    ), (
+        1518381705071689728,
+        'SSO_LOGIN',
+        'SSO LOGIN',
+        'b4a970346a91d6467f47',
+        'e5e009b4abdec1195235f1b918d40dd90740dbe6',
+        'http://localhost:3000/callback',
+        0,
+        0
     );
 
 insert into application_user(application_id, user_id, created_by, updated_by)
