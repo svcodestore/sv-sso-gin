@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "github.com/svcodestore/sv-sso-gin/proto/application";
+
+package application;
+
+import "google/protobuf/struct.proto";
+
+service Application {
+  rpc GetApplicationById(GetApplicationByIdRequest) returns (GetApplicationByIdReply) {}
+}
+
+message GetApplicationByIdRequest {
+  string id = 1;
+}
+
+message GetApplicationByIdReply {
+  google.protobuf.Struct Application = 1;
+}

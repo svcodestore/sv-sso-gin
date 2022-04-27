@@ -24,7 +24,7 @@ func RegisterUserRpcServer(s *grpc.Server) {
 	pb.RegisterUserServer(s, &UserRpcServer{})
 }
 
-func (s *UserRpcServer) GetUser(ctx context.Context, in *pb.GetUserRequest) (*pb.GetUserReply, error) {
+func (s *UserRpcServer) GetUserById(ctx context.Context, in *pb.GetUserByIdRequest) (*pb.GetUserByIdReply, error) {
 	user, e := userService.UserWithId(&model.Users{
 		ID: in.GetId(),
 	})
@@ -43,5 +43,5 @@ func (s *UserRpcServer) GetUser(ctx context.Context, in *pb.GetUserRequest) (*pb
 	}
 
 	log.Printf("Received user id: %v", in.GetId())
-	return &pb.GetUserReply{Reply: u}, nil
+	return &pb.GetUserByIdReply{User: u}, nil
 }
