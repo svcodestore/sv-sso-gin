@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/svcodestore/sv-sso-gin/global"
+	"github.com/svcodestore/sv-sso-gin/model"
+	"github.com/svcodestore/sv-sso-gin/model/system/request"
+	"github.com/svcodestore/sv-sso-gin/utils"
 	"github.com/thanhpk/randstr"
 	"log"
 	"strconv"
@@ -19,7 +22,27 @@ const (
 	IssuedRefreshTokenRedisKey = "issuedRefreshToken"
 )
 
+var (
+	applicationService = ApplicationService{}
+	jwtService         = JwtService{}
+	userService        = UserService{}
+)
+
 type OauthService struct {
+}
+
+func (s *OauthService) DoGenerateGrantCode(userId, clientId string) (string, error) {
+	application, err := applicationService.ApplicationWithClientId(&model.Applications{ClientID: clientId})
+	if err != nil {
+		return "", err
+	}
+	if application.ClientID == clientId {
+		grantedCode := oauthService.GenerateGrantCode()
+		_, err = oauthService.SaveGrantedCodeToRedis(userId, clientId, grantedCode)
+		return grantedCode, nil
+	} else {
+		return "", errors.New("application nonexistent")
+	}
 }
 
 func (s *OauthService) GenerateGrantCode() string {
@@ -114,6 +137,72 @@ func (s *OauthService) IsUserLogin(userId string) (isLogin bool) {
 			isLogin = true
 			return
 		}
+	}
+	return
+}
+
+func (s *OauthService) DoGenerateOauthCode(clientId, clientSecret, code, redirectUri string) (accessToken, refreshToken string, user model.Users, err error) {
+	application, err := applicationService.ApplicationWithClientId(&model.Applications{ClientID: clientId})
+	if err != nil {
+		return
+	}
+	if redirectUri != application.RedirectURIs {
+		err = errors.New("redirect uri " + redirectUri + " error")
+		return
+	}
+
+	if clientId == application.ClientID && clientSecret == application.ClientSecret {
+		userId, grantedCode, expireAt, e := oauthService.GetGrantedCodeFromRedisByClientId(clientId)
+		if e != nil {
+			err = e
+			return
+		}
+
+		if grantedCode != code {
+			err = errors.New("code err")
+			return
+		}
+
+		if utils.IsExpire(expireAt) {
+			oauthService.DeleteGrantCodeByClientId(clientId)
+			err = errors.New("expired code")
+			return
+		}
+		user, err = userService.UserWithId(&model.Users{ID: userId})
+		if err != nil {
+			return
+		}
+		accessToken, refreshToken, err = jwtService.GenerateToken(request.BaseClaims{
+			UserId:   user.ID,
+			UUID:     user.UUID,
+			LoginId:  user.LoginID,
+			Username: user.Name,
+			ClientId: clientId,
+		})
+
+		if err == nil {
+			oauthService.DeleteGrantCodeByClientId(clientId)
+			return
+		}
+	}
+	return
+}
+
+func (s *OauthService) DoOauthLogin(username, password, loginType, clientId string) (accessToken, refreshToken string, user *model.Users, err error) {
+	if loginType == "login" {
+		user, err = userService.Login(username, password)
+		if err != nil {
+			return
+		}
+
+		accessToken, refreshToken, err = jwtService.GenerateToken(request.BaseClaims{
+			UUID:     user.UUID,
+			UserId:   user.ID,
+			Username: user.Name,
+			LoginId:  user.LoginID,
+			ClientId: clientId,
+		})
+		return
 	}
 	return
 }

@@ -3,7 +3,6 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/svcodestore/sv-sso-gin/model/common/response"
-	"github.com/svcodestore/sv-sso-gin/model/system/request"
 	"github.com/svcodestore/sv-sso-gin/utils"
 	"strings"
 )
@@ -15,30 +14,16 @@ func Login(c *gin.Context) {
 	clientId := c.PostForm("clientId")
 
 	if username != "" {
-		if loginType == "login" {
-			if user, err := userService.Login(username, password); err != nil {
-				response.FailWithMessage(err.Error(), c)
-			} else {
-				accessToken, refreshToken, err := jwtService.GenerateToken(request.BaseClaims{
-					UUID:     user.UUID,
-					UserId:   user.ID,
-					Username: user.Name,
-					LoginId:  user.LoginID,
-					ClientId: clientId,
-				})
-
-				if err == nil {
-					response.OkWithData(gin.H{
-						"user":         user,
-						"accessToken":  accessToken,
-						"refreshToken": refreshToken,
-					}, c)
-					return
-				}
-
-				response.FailWithMessage(err.Error(), c)
-			}
+		accessToken, refreshToken, user, err := oauthService.DoOauthLogin(username, password, loginType, clientId)
+		if err == nil {
+			response.OkWithData(gin.H{
+				"user":         user,
+				"accessToken":  accessToken,
+				"refreshToken": refreshToken,
+			}, c)
+			return
 		}
+		response.FailWithMessage(err.Error(), c)
 	}
 }
 
