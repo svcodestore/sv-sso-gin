@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"github.com/svcodestore/sv-sso-gin/rpc"
 	"log"
 
 	"github.com/svcodestore/sv-sso-gin/global"
@@ -13,7 +14,7 @@ type server interface {
 	ListenAndServe() error
 }
 
-func RunServer() {
+func commonInit() {
 	global.CONFIGURATOR = initialize.InitConfigurator()
 	global.LOGGER = initialize.Zap()
 	global.DB = initialize.Gorm()
@@ -33,6 +34,10 @@ func RunServer() {
 	}
 
 	initialize.Redis()
+}
+
+func RunServer() {
+	commonInit()
 
 	routers := initialize.Routers()
 
@@ -40,4 +45,10 @@ func RunServer() {
 	s := initServer(address, routers)
 
 	global.LOGGER.Error(s.ListenAndServe().Error())
+
+}
+
+func RunRpcServer()  {
+	commonInit()
+	initialize.InitGrpc(rpc.RegisterServer)
 }

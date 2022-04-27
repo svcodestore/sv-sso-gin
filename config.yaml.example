@@ -17,6 +17,7 @@ system:
   id:
   env: public
   addr: 8888
+  addr: 50088
   db-type: mysql
   oss-type: local
   use-multipoint: false
