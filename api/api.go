@@ -1,10 +1,12 @@
 package api
 
 import (
+	"strings"
+
 	"github.com/gin-gonic/gin"
+
 	"github.com/svcodestore/sv-sso-gin/model/common/response"
 	"github.com/svcodestore/sv-sso-gin/utils"
-	"strings"
 )
 
 func Login(c *gin.Context) {
@@ -25,6 +27,7 @@ func Login(c *gin.Context) {
 		}
 		response.FailWithMessage(err.Error(), c)
 	}
+	response.Fail(c)
 }
 
 func Logout(c *gin.Context) {

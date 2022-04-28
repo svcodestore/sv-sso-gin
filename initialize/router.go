@@ -2,12 +2,14 @@ package initialize
 
 import (
 	"github.com/gin-gonic/gin"
+
 	"github.com/svcodestore/sv-sso-gin/middleware"
 	"github.com/svcodestore/sv-sso-gin/router"
 )
 
 func Routers() *gin.Engine {
 	r := gin.Default()
+	r.Use(middleware.Cors())
 
 	apiGroup := r.Group("api")
 
