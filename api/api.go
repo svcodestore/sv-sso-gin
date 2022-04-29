@@ -26,6 +26,7 @@ func Login(c *gin.Context) {
 			return
 		}
 		response.FailWithMessage(err.Error(), c)
+		return
 	}
 	response.Fail(c)
 }
