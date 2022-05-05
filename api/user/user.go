@@ -2,19 +2,20 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
+
 	"github.com/svcodestore/sv-sso-gin/model"
 	"github.com/svcodestore/sv-sso-gin/model/common/response"
+	"github.com/svcodestore/sv-sso-gin/model/system/request"
 	"github.com/svcodestore/sv-sso-gin/service"
 )
 
 var userService = service.ServiceGroup.UserService
 
 func CurrentUser(c *gin.Context) {
-	response.OkWithData(gin.H{
-		"name":   "Serati Ma",
-		"avatar": "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png",
-		"access": "admin",
-	}, c)
+	claims, _ := c.Get("claims")
+	id := claims.(*request.CustomClaims).UserId
+	user, _ := userService.UserWithId(&model.Users{ID: id})
+	response.OkWithData(user, c)
 }
 
 func RegisterUser(c *gin.Context) {
@@ -44,13 +45,23 @@ func CreateUser(c *gin.Context) {
 	password := c.PostForm("password")
 	name := c.PostForm("name")
 	lang := c.PostForm("lang")
-	user, err := userService.CreateUser(&model.UsersToSave{
+
+	m := &model.UsersToSave{
 		LoginID:   loginId,
 		Password:  password,
-		Name:      name,
-		Lang:      lang,
+		CreatedBy: uid,
 		UpdatedBy: uid,
-	})
+	}
+
+	if name != "" {
+		m.Name = name
+	}
+
+	if lang != "" {
+		m.Lang = lang
+	}
+
+	user, err := userService.CreateUser(m)
 
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
