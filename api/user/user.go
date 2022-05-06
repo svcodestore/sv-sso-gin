@@ -85,6 +85,7 @@ func UpdateUser(c *gin.Context) {
 	status := c.PostForm("status")
 
 	updatingUser := &model.UsersToSave{
+		ID:        id,
 		UpdatedBy: uid,
 	}
 

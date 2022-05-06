@@ -2,7 +2,9 @@ package system
 
 import (
 	"errors"
+
 	uuid "github.com/satori/go.uuid"
+
 	"github.com/svcodestore/sv-sso-gin/global"
 	"github.com/svcodestore/sv-sso-gin/model"
 	"github.com/svcodestore/sv-sso-gin/utils"
@@ -77,6 +79,7 @@ func (s *UserService) DeleteUserWithId(u *model.Users) bool {
 }
 
 func (s *UserService) UpdateUser(u *model.UsersToSave) (user model.Users, err error) {
+	u.ID = ""
 	db := global.UserMgr.Where("id = ?", u.ID).Updates(u)
 
 	if db.RowsAffected == 1 {
