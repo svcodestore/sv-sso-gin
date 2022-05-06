@@ -84,6 +84,7 @@ func (s *UserService) UpdateUser(u *model.UsersToSave) (user model.Users, err er
 	db := global.UserMgr.Where("id = ?", id).Updates(u)
 
 	if db.RowsAffected == 1 {
+		global.UserMgr.Where("id = ?", id).Select("status").Updates(u)
 		user, err = global.UserMgr.GetFromID(id)
 		return
 	}
