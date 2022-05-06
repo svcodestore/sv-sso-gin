@@ -79,11 +79,12 @@ func (s *UserService) DeleteUserWithId(u *model.Users) bool {
 }
 
 func (s *UserService) UpdateUser(u *model.UsersToSave) (user model.Users, err error) {
+	id := u.ID
 	u.ID = ""
-	db := global.UserMgr.Where("id = ?", u.ID).Updates(u)
+	db := global.UserMgr.Where("id = ?", id).Updates(u)
 
 	if db.RowsAffected == 1 {
-		user, err = global.UserMgr.GetFromID(u.ID)
+		user, err = global.UserMgr.GetFromID(id)
 		return
 	}
 
@@ -91,9 +92,10 @@ func (s *UserService) UpdateUser(u *model.UsersToSave) (user model.Users, err er
 	return
 }
 
-func (s *UserService) AllUser() ([]*model.Users, error) {
-	users, err := global.UserMgr.Gets()
-	return users, err
+func (s *UserService) AllUser() (users []*model.Users, err error) {
+	userMgr := model.UsersMgr(utils.Gorm())
+	users, err = userMgr.Gets()
+	return
 }
 
 func (s *UserService) UserWithId(u *model.Users) (user model.Users, err error) {
