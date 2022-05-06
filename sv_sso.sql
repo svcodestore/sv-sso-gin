@@ -141,6 +141,7 @@ insert into applications(id,
                          name,
                          client_id,
                          client_secret,
+                         redirect_uris,
                          created_by,
                          updated_by) VALUE (
                                             0,
