@@ -148,6 +148,7 @@ insert into applications(id,
                                             'SV SSO',
                                             '0ef9d7b504019278e740',
                                             '42fbdcb2b910024594c9be51463bbe4861f5b44a',
+                                            'http://localhost:8000/callback',
                                             0,
                                             0
     ), (
@@ -156,6 +157,7 @@ insert into applications(id,
         'SV ERP WEB',
         '60f9bd80d01913d3c74e',
         '6ec3749d9bc70dbacaa58ed378243bb01c655ed3',
+        'https://localhost:3100/callback',
         0,
         0
     ), (

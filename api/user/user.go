@@ -85,7 +85,6 @@ func UpdateUser(c *gin.Context) {
 	status := c.PostForm("status")
 
 	updatingUser := &model.UsersToSave{
-		ID:        id,
 		UpdatedBy: uid,
 	}
 
@@ -114,7 +113,7 @@ func UpdateUser(c *gin.Context) {
 		updatingUser.Status = status == "true"
 	}
 
-	user, err := userService.CreateUser(updatingUser)
+	user, err := userService.UpdateUser(updatingUser)
 
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
