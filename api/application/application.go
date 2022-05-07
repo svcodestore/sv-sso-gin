@@ -69,34 +69,56 @@ func UpdateApplicationById(c *gin.Context) {
 		UpdatedBy: uid,
 	}
 
+	isOnlyUpdateStatus := true
+
 	if code != "" {
+		isOnlyUpdateStatus = false
 		updatingApplication.Code = code
 	}
 	if name != "" {
+		isOnlyUpdateStatus = false
 		updatingApplication.Name = name
 	}
 	if internalUrl != "" {
+		isOnlyUpdateStatus = false
 		updatingApplication.InternalURL = internalUrl
 	}
 	if homepageUrl != "" {
+		isOnlyUpdateStatus = false
 		updatingApplication.HomepageURL = homepageUrl
 	}
-	if status != "" {
-		updatingApplication.Status = status == "true"
-	}
+
 	if redirectUris != "" {
+		isOnlyUpdateStatus = false
 		updatingApplication.RedirectURIs = redirectUris
 	}
 	if tokenFormat != "" {
+		isOnlyUpdateStatus = false
 		updatingApplication.TokenFormat = tokenFormat
 	}
 
-	application, err := applicationService.UpdateApplicationWithId(updatingApplication)
-	if err != nil {
-		response.FailWithMessage(err.Error(), c)
-	} else {
-		response.OkWithData(application, c)
+	var application model.Applications
+	var err error
+
+	if !isOnlyUpdateStatus {
+		application, err = applicationService.UpdateApplicationWithId(updatingApplication)
 	}
+
+	if err == nil {
+		if status == "1" || status == "0" {
+			if status == "1" {
+				application, err = applicationService.UpdateApplicationStatusWithId(true, id, currentUserId)
+			} else if status == "0" {
+				application, err = applicationService.UpdateApplicationStatusWithId(false, id, currentUserId)
+			}
+		}
+		if err == nil {
+			response.OkWithData(application, c)
+			return
+		}
+	}
+
+	response.FailWithMessage(err.Error(), c)
 }
 
 func GetAllApplication(c *gin.Context) {
@@ -110,7 +132,7 @@ func GetAllApplication(c *gin.Context) {
 
 func GetApplicationById(c *gin.Context) {
 	id := c.Param("id")
-	application, err := applicationService.ApplicationWithId(&model.Applications{ID: id})
+	application, err := applicationService.ApplicationWithId(id)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 	} else {
@@ -120,7 +142,7 @@ func GetApplicationById(c *gin.Context) {
 
 func GetCurrentApplication(c *gin.Context) {
 	id := global.CONFIG.System.Id
-	application, err := applicationService.ApplicationWithId(&model.Applications{ID: id})
+	application, err := applicationService.ApplicationWithId(id)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 	} else {
@@ -130,4 +152,3 @@ func GetCurrentApplication(c *gin.Context) {
 		response.OkWithData(application, c)
 	}
 }
-

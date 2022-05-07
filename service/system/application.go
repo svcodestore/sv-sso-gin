@@ -20,7 +20,7 @@ func (s *ApplicationService) CreateApplication(a *model.Applications) (applicati
 		return
 	}
 
-	return s.ApplicationWithId(a)
+	return s.ApplicationWithId(a.ID)
 }
 
 func (s *ApplicationService) DeleteApplication(a *model.Applications) (isDeleted bool) {
@@ -30,11 +30,27 @@ func (s *ApplicationService) DeleteApplication(a *model.Applications) (isDeleted
 }
 
 func (s *ApplicationService) UpdateApplicationWithId(a *model.Applications) (application model.Applications, err error) {
-	db := global.ApplicationMgr.Where("id = ?", a.ID).Updates(a)
+	id := a.ID
+	a.ID = ""
+	db := global.ApplicationMgr.Where("id = ?", id).Updates(a)
 	if db.RowsAffected == 1 {
-		return s.ApplicationWithId(a)
+		global.ApplicationMgr = model.ApplicationsMgr(utils.Gorm())
+		return s.ApplicationWithId(id)
 	}
 	err = db.Error
+	return
+}
+
+func (s ApplicationService) UpdateApplicationStatusWithId(status bool, id, updatedBy string) (application model.Applications, err error) {
+	err = global.ApplicationMgr.Where("id = ?", id).Select("status").Updates(map[string]interface{}{
+		"status":     status,
+		"updated_by": updatedBy,
+	}).Error
+	if err != nil {
+		return
+	}
+	global.ApplicationMgr = model.ApplicationsMgr(utils.Gorm())
+	application, err = global.ApplicationMgr.GetFromID(id)
 	return
 }
 
@@ -43,12 +59,12 @@ func (s *ApplicationService) AllApplication() (applications []*model.Application
 	return
 }
 
-func (s *ApplicationService) ApplicationWithId(a *model.Applications) (application model.Applications, err error) {
-	application, err = global.ApplicationMgr.GetFromID(a.ID)
+func (s *ApplicationService) ApplicationWithId(id string) (application model.Applications, err error) {
+	application, err = global.ApplicationMgr.GetFromID(id)
 	return
 }
 
-func (s *ApplicationService) ApplicationWithClientId(a *model.Applications) (application model.Applications, err error) {
-	application, err = global.ApplicationMgr.GetFromClientID(a.ClientID)
+func (s *ApplicationService) ApplicationWithClientId(clientId string) (application model.Applications, err error) {
+	application, err = global.ApplicationMgr.GetFromClientID(clientId)
 	return
 }

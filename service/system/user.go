@@ -81,6 +81,11 @@ func (s *UserService) DeleteUserWithId(u model.Users) bool {
 func (s *UserService) UpdateUser(u model.UsersToSave) (user model.Users, err error) {
 	id := u.ID
 	u.ID = ""
+	if u.Password != "" {
+		var c CryptoService
+		p, _ := c.PasswordHash(u.Password)
+		u.Password = p
+	}
 	db := global.UserMgr.Where("id = ?", id).Updates(u)
 
 	if db.RowsAffected == 1 {

@@ -32,7 +32,7 @@ type OauthService struct {
 }
 
 func (s *OauthService) DoGenerateGrantCode(userId, clientId string) (string, error) {
-	application, err := applicationService.ApplicationWithClientId(&model.Applications{ClientID: clientId})
+	application, err := applicationService.ApplicationWithClientId(clientId)
 	if err != nil {
 		return "", err
 	}
@@ -142,7 +142,7 @@ func (s *OauthService) IsUserLogin(userId string) (isLogin bool) {
 }
 
 func (s *OauthService) DoGenerateOauthCode(clientId, clientSecret, code, redirectUri string) (accessToken, refreshToken string, user model.Users, err error) {
-	application, err := applicationService.ApplicationWithClientId(&model.Applications{ClientID: clientId})
+	application, err := applicationService.ApplicationWithClientId(clientId)
 	if err != nil {
 		return
 	}

@@ -2,7 +2,6 @@ package application
 
 import (
 	jsoniter "github.com/json-iterator/go"
-	"github.com/svcodestore/sv-sso-gin/model"
 	pb "github.com/svcodestore/sv-sso-gin/proto/application"
 	"github.com/svcodestore/sv-sso-gin/service"
 	"golang.org/x/net/context"
@@ -25,9 +24,7 @@ func RegisterApplicationRpcServer(s *grpc.Server) {
 }
 
 func (s *ApplicationRpcServer) GetApplicationById(ctx context.Context, in *pb.GetApplicationByIdRequest) (*pb.GetApplicationByIdReply, error) {
-	application, e := applicationService.ApplicationWithId(&model.Applications{
-		ID: in.GetId(),
-	})
+	application, e := applicationService.ApplicationWithId(in.GetId())
 	if e != nil {
 		return nil, e
 	}

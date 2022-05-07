@@ -30,8 +30,8 @@ func CreateApplicationUser(c *gin.Context) {
 }
 
 func DeleteApplicationUserById(c *gin.Context) {
-	applicationId := c.PostForm("applicationId")
-	userId := c.PostForm("userId")
+	applicationId := c.Query("applicationId")
+	userId := c.Query("userId")
 
 	isDeleted := applicationUserService.DeleteApplicationUserWithId(&model.ApplicationUser{
 		ApplicationID: applicationId,
