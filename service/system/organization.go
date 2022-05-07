@@ -17,7 +17,7 @@ func (s *OrganizationService) CreateOrganization(o *model.Organizations) (organi
 		return
 	}
 
-	return s.OrganizationWithId(o)
+	return s.OrganizationWithId(o.ID)
 }
 
 func (s *OrganizationService) DeleteOrganizationWithId(o *model.Organizations) (isDeleted bool) {
@@ -27,11 +27,27 @@ func (s *OrganizationService) DeleteOrganizationWithId(o *model.Organizations) (
 }
 
 func (s *OrganizationService) UpdateOrganizationWithId(o *model.Organizations) (organization model.Organizations, err error) {
-	db := global.OrganizationMgr.Where("id = ?", o.ID).Updates(o)
+	id := o.ID
+	o.ID = ""
+	db := global.OrganizationMgr.Where("id = ?", id).Updates(o)
 	if db.RowsAffected == 1 {
-		return s.OrganizationWithId(o)
+		global.OrganizationMgr = model.OrganizationsMgr(utils.Gorm())
+		return s.OrganizationWithId(id)
 	}
 	err = db.Error
+	return
+}
+
+func (s *OrganizationService) UpdateOrganizationStatusWithId(status bool, id, updatedBy string) (organization model.Organizations, err error) {
+	err = global.OrganizationMgr.Where("id = ?", id).Select("status").Updates(map[string]interface{}{
+		"status":     status,
+		"updated_by": updatedBy,
+	}).Error
+	if err != nil {
+		return
+	}
+	global.OrganizationMgr = model.OrganizationsMgr(utils.Gorm())
+	organization, err = global.OrganizationMgr.GetFromID(id)
 	return
 }
 
@@ -40,7 +56,7 @@ func (s *OrganizationService) AllOrganization() (organizations []*model.Organiza
 	return
 }
 
-func (s *OrganizationService) OrganizationWithId(o *model.Organizations) (organization model.Organizations, err error) {
-	organization, err = global.OrganizationMgr.GetFromID(o.ID)
+func (s *OrganizationService) OrganizationWithId(id string) (organization model.Organizations, err error) {
+	organization, err = global.OrganizationMgr.GetFromID(id)
 	return
 }

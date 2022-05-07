@@ -43,21 +43,49 @@ func UpdateOrganizationById(c *gin.Context) {
 	id := c.Param("id")
 	code := c.PostForm("code")
 	name := c.PostForm("name")
+	status := c.PostForm("status")
 	currentUserId := c.PostForm("currentUserId")
 	uid := currentUserId
 
-	organization, err := organizationService.UpdateOrganizationWithId(&model.Organizations{
+	o := &model.Organizations{
 		ID:        id,
-		Code:      code,
-		Name:      name,
 		UpdatedBy: uid,
-	})
-
-	if err != nil {
-		response.FailWithMessage(err.Error(), c)
-	} else {
-		response.OkWithData(organization, c)
 	}
+
+	isOnlyUpdateStatus := true
+
+	if code != "" {
+		isOnlyUpdateStatus = false
+		o.Code = code
+	}
+
+	if name != "" {
+		isOnlyUpdateStatus = false
+		o.Name = name
+	}
+
+	var organization model.Organizations
+	var err error
+
+	if !isOnlyUpdateStatus {
+		organization, err = organizationService.UpdateOrganizationWithId(o)
+	}
+
+	if err == nil {
+		if status == "1" || status == "0" {
+			if status == "1" {
+				organization, err = organizationService.UpdateOrganizationStatusWithId(true, id, currentUserId)
+			} else if status == "0" {
+				organization, err = organizationService.UpdateOrganizationStatusWithId(false, id, currentUserId)
+			}
+		}
+		if err == nil {
+			response.OkWithData(organization, c)
+			return
+		}
+	}
+
+	response.FailWithMessage(err.Error(), c)
 }
 
 func GetAllOrganization(c *gin.Context) {
@@ -67,6 +95,6 @@ func GetAllOrganization(c *gin.Context) {
 
 func GetOrganizationById(c *gin.Context) {
 	id := c.Param("id")
-	organization, _ := organizationService.OrganizationWithId(&model.Organizations{ID: id})
+	organization, _ := organizationService.OrganizationWithId(id)
 	response.OkWithData(organization, c)
 }

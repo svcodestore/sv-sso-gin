@@ -85,6 +85,8 @@ func (s *UserService) UpdateUser(u model.UsersToSave) (user model.Users, err err
 
 	if db.RowsAffected == 1 {
 		user, err = global.UserMgr.GetFromID(id)
+		// problem
+		global.UserMgr = model.UsersMgr(utils.Gorm())
 		return
 	}
 
@@ -101,12 +103,12 @@ func (s *UserService) UpdateUserStatus(status bool, id, updatedBy string) (user 
 		return
 	}
 	user, err = global.UserMgr.GetFromID(id)
+	// problem
+	global.UserMgr = model.UsersMgr(utils.Gorm())
 	return
 }
 
 func (s *UserService) AllUser() (users []*model.Users, err error) {
-	// problem
-	global.UserMgr = model.UsersMgr(utils.Gorm())
 	users, err = global.UserMgr.Gets()
 	return
 }
