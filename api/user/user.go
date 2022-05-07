@@ -14,7 +14,7 @@ var userService = service.ServiceGroup.UserService
 func CurrentUser(c *gin.Context) {
 	claims, _ := c.Get("claims")
 	id := claims.(*request.CustomClaims).UserId
-	user, _ := userService.UserWithId(&model.Users{ID: id})
+	user, _ := userService.UserWithId(model.Users{ID: id})
 	response.OkWithData(user, c)
 }
 
@@ -23,7 +23,7 @@ func RegisterUser(c *gin.Context) {
 	password := c.PostForm("password")
 	name := c.PostForm("name")
 	lang := c.PostForm("lang")
-	user, err := userService.RegisterUser(&model.UsersToSave{
+	user, err := userService.RegisterUser(model.UsersToSave{
 		LoginID:   loginId,
 		Password:  password,
 		Name:      name,
@@ -84,48 +84,69 @@ func UpdateUser(c *gin.Context) {
 	lang := c.PostForm("lang")
 	status := c.PostForm("status")
 
-	updatingUser := &model.UsersToSave{
+	updatingUser := model.UsersToSave{
 		ID:        id,
 		UpdatedBy: uid,
 	}
 
+	isOnlyUpdateStatus := true
+
 	if loginId != "" {
+		isOnlyUpdateStatus = false
 		updatingUser.LoginID = loginId
 	}
 	if password != "" {
+		isOnlyUpdateStatus = false
 		updatingUser.Password = password
 	}
 	if name != "" {
+		isOnlyUpdateStatus = false
 		updatingUser.Name = name
 	}
 	if alias != "" {
+		isOnlyUpdateStatus = false
 		updatingUser.Alias = alias
 	}
 	if phone != "" {
+		isOnlyUpdateStatus = false
 		updatingUser.Phone = phone
 	}
 	if email != "" {
+		isOnlyUpdateStatus = false
 		updatingUser.Email = email
 	}
 	if lang != "" {
+		isOnlyUpdateStatus = false
 		updatingUser.Lang = lang
 	}
-	if status != "" {
-		updatingUser.Status = status == "true"
+
+	var user model.Users
+	var err error
+
+	if !isOnlyUpdateStatus {
+		user, err = userService.UpdateUser(updatingUser)
 	}
 
-	user, err := userService.UpdateUser(updatingUser)
-
-	if err != nil {
-		response.FailWithMessage(err.Error(), c)
-	} else {
-		response.OkWithData(user, c)
+	if err == nil {
+		if status == "1" || status == "0" {
+			if status == "1" {
+				user, err = userService.UpdateUserStatus(true, id, currentUserId)
+			} else if status == "0" {
+				user, err = userService.UpdateUserStatus(false, id, currentUserId)
+			}
+		}
+		if err == nil {
+			response.OkWithData(user, c)
+			return
+		}
 	}
+
+	response.FailWithMessage(err.Error(), c)
 }
 
 func DeleteUserById(c *gin.Context) {
 	id := c.Param("id")
-	isDeleted := userService.DeleteUserWithId(&model.Users{ID: id})
+	isDeleted := userService.DeleteUserWithId(model.Users{ID: id})
 	if isDeleted {
 		response.Ok(c)
 	} else {
@@ -140,6 +161,6 @@ func GetAllUser(c *gin.Context) {
 
 func GetUserById(c *gin.Context) {
 	id := c.Param("id")
-	user, _ := userService.UserWithId(&model.Users{ID: id})
+	user, _ := userService.UserWithId(model.Users{ID: id})
 	response.OkWithData(user, c)
 }

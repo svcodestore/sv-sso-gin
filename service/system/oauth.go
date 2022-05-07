@@ -168,7 +168,7 @@ func (s *OauthService) DoGenerateOauthCode(clientId, clientSecret, code, redirec
 			err = errors.New("expired code")
 			return
 		}
-		user, err = userService.UserWithId(&model.Users{ID: userId})
+		user, err = userService.UserWithId(model.Users{ID: userId})
 		if err != nil {
 			return
 		}
@@ -188,7 +188,7 @@ func (s *OauthService) DoGenerateOauthCode(clientId, clientSecret, code, redirec
 	return
 }
 
-func (s *OauthService) DoOauthLogin(username, password, loginType, clientId string) (accessToken, refreshToken string, user *model.Users, err error) {
+func (s *OauthService) DoOauthLogin(username, password, loginType, clientId string) (accessToken, refreshToken string, user model.Users, err error) {
 	if loginType == "login" {
 		user, err = userService.Login(username, password)
 		if err != nil {

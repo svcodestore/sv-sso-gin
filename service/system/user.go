@@ -20,25 +20,25 @@ func (s *UserService) AccountDecrypt(usr, pwd string) (u, p string) {
 	return
 }
 
-func (s *UserService) Login(usr, pwd string) (*model.Users, error) {
+func (s *UserService) Login(usr, pwd string) (model.Users, error) {
 	username, password := s.AccountDecrypt(usr, pwd)
-	u := &model.Users{LoginID: username, Password: password}
+	u := model.Users{LoginID: username, Password: password}
 
 	return s.DoLogin(u)
 }
 
-func (s *UserService) DoLogin(u *model.Users) (*model.Users, error) {
+func (s *UserService) DoLogin(u model.Users) (user model.Users, err error) {
 	var c CryptoService
 
-	user, err := global.UserMgr.GetFromLoginID(u.LoginID)
+	user, err = global.UserMgr.GetFromLoginID(u.LoginID)
 	if c.PasswordVerify(u.Password, user.Password) {
-		return &user, err
+		return user, err
 	}
 
-	return nil, errors.New("invalid password")
+	return user, errors.New("invalid password")
 }
 
-func (s *UserService) RegisterUser(u *model.UsersToSave) (user model.Users, err error) {
+func (s *UserService) RegisterUser(u model.UsersToSave) (user model.Users, err error) {
 	var c CryptoService
 	username, password := s.AccountDecrypt(u.LoginID, u.Password)
 	u.LoginID = username
@@ -73,18 +73,17 @@ func (s *UserService) CreateUser(u *model.UsersToSave) (user model.Users, err er
 	return
 }
 
-func (s *UserService) DeleteUserWithId(u *model.Users) bool {
+func (s *UserService) DeleteUserWithId(u model.Users) bool {
 	db := global.DB.Where("id = ?", u.ID).Delete(u)
 	return db.RowsAffected == 1
 }
 
-func (s *UserService) UpdateUser(u *model.UsersToSave) (user model.Users, err error) {
+func (s *UserService) UpdateUser(u model.UsersToSave) (user model.Users, err error) {
 	id := u.ID
 	u.ID = ""
 	db := global.UserMgr.Where("id = ?", id).Updates(u)
 
 	if db.RowsAffected == 1 {
-		global.UserMgr.Where("id = ?", id).Select("status").Updates(u)
 		user, err = global.UserMgr.GetFromID(id)
 		return
 	}
@@ -93,13 +92,26 @@ func (s *UserService) UpdateUser(u *model.UsersToSave) (user model.Users, err er
 	return
 }
 
-func (s *UserService) AllUser() (users []*model.Users, err error) {
-	userMgr := model.UsersMgr(utils.Gorm())
-	users, err = userMgr.Gets()
+func (s *UserService) UpdateUserStatus(status bool, id, updatedBy string) (user model.Users, err error) {
+	err = global.UserMgr.Where("id = ?", id).Select("status").Updates(map[string]interface{}{
+		"status":     status,
+		"updated_by": updatedBy,
+	}).Error
+	if err != nil {
+		return
+	}
+	user, err = global.UserMgr.GetFromID(id)
 	return
 }
 
-func (s *UserService) UserWithId(u *model.Users) (user model.Users, err error) {
+func (s *UserService) AllUser() (users []*model.Users, err error) {
+	// problem
+	global.UserMgr = model.UsersMgr(utils.Gorm())
+	users, err = global.UserMgr.Gets()
+	return
+}
+
+func (s *UserService) UserWithId(u model.Users) (user model.Users, err error) {
 	user, err = global.UserMgr.GetFromID(u.ID)
 	return
 }

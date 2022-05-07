@@ -25,7 +25,7 @@ func RegisterUserRpcServer(s *grpc.Server) {
 }
 
 func (s *UserRpcServer) GetUserById(ctx context.Context, in *pb.GetUserByIdRequest) (*pb.GetUserByIdReply, error) {
-	user, e := userService.UserWithId(&model.Users{
+	user, e := userService.UserWithId(model.Users{
 		ID: in.GetId(),
 	})
 	if e != nil {
