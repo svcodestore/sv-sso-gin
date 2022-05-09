@@ -22,6 +22,7 @@ create table users
     constraint users_chk_lang check ( lang = 'zh_CN' or lang = 'zh_TW' or lang = 'zh_HK' or lang = 'en_US'),
     constraint users_fk_created_by foreign key (created_by) references `users` (id) on update cascade on delete restrict,
     constraint users_fk_updated_by foreign key (updated_by) references `users` (id) on update cascade on delete restrict,
+    unique key `user_uuid_uindex` (`uuid`),
     unique key `user_login_id_uindex` (`login_id`),
     index `user_uuid_index` (`uuid`),
     primary key (id)
@@ -29,37 +30,39 @@ create table users
 
 create table organizations
 (
-    id         bigint      not null,
-    code       varchar(64) not null,
-    name       varchar(255),
-    status     tinyint(1)  not null default 1,
-    created_at datetime(6) not null default current_timestamp(6),
-    created_by bigint      not null,
-    updated_at datetime(6) not null default current_timestamp(6) on update current_timestamp(6),
-    updated_by bigint      not null,
+    id         bigint       not null,
+    code       varchar(64)  not null,
+    name       varchar(255) not null,
+    status     tinyint(1)   not null default 1,
+    created_at datetime(6)  not null default current_timestamp(6),
+    created_by bigint       not null,
+    updated_at datetime(6)  not null default current_timestamp(6) on update current_timestamp(6),
+    updated_by bigint       not null,
     primary key (id),
     constraint organizations_chk_status check ( status = 0 or status = 1),
     constraint organizations_fk_created_by foreign key (created_by) references `users` (id) on update cascade on delete restrict,
     constraint organizations_fk_updated_by foreign key (updated_by) references `users` (id) on update cascade on delete restrict,
-    constraint unique organizations_code_uindex (code)
+    constraint unique organizations_code_uindex (code),
+    constraint unique organizations_name_uindex (name)
 ) engine = InnoDB;
 
 create table applications
 (
-    id            bigint      not null,
-    code          varchar(64) not null,
-    name          varchar(255),
+    id            bigint       not null,
+    code          varchar(64)  not null,
+    name          varchar(255) not null,
     internal_url  varchar(255),
     homepage_url  varchar(255),
-    status        tinyint(1)  not null default 1,
-    client_id     varchar(255),
+    status        tinyint(1)   not null default 1,
+    client_id     varchar(255) not null,
     client_secret varchar(255),
-    redirect_uris varchar(255),
-    token_format  varchar(100)         default 'JWT',
-    created_at    datetime(6) not null default current_timestamp(6),
-    created_by    bigint      not null,
-    updated_at    datetime(6) not null default current_timestamp(6) on update current_timestamp(6),
-    updated_by    bigint      not null,
+    redirect_uris varchar(255) not null,
+    login_uris    varchar(255) not null,
+    token_format  varchar(100)          default 'JWT',
+    created_at    datetime(6)  not null default current_timestamp(6),
+    created_by    bigint       not null,
+    updated_at    datetime(6)  not null default current_timestamp(6) on update current_timestamp(6),
+    updated_by    bigint       not null,
     primary key (id),
     constraint applications_chk_status check (
             status = 0
@@ -68,6 +71,7 @@ create table applications
     constraint applications_fk_created_by foreign key (created_by) references `users` (id) on update cascade on delete restrict,
     constraint applications_fk_updated_by foreign key (updated_by) references `users` (id) on update cascade on delete restrict,
     constraint unique applications_code_unique_index_code (code),
+    constraint unique applications_name_unique_index_code (name),
     constraint unique applications_code_unique_index_client_id (client_id)
 ) engine = InnoDB;
 
@@ -142,6 +146,7 @@ insert into applications(id,
                          client_id,
                          client_secret,
                          redirect_uris,
+                         login_uris,
                          created_by,
                          updated_by) VALUE (
                                             0,
@@ -150,6 +155,7 @@ insert into applications(id,
                                             '0ef9d7b504019278e740',
                                             '42fbdcb2b910024594c9be51463bbe4861f5b44a',
                                             'http://localhost:8000/callback',
+                                            'http://localhost:3000/oauth2.0/authorize?',
                                             0,
                                             0
     ), (
@@ -159,6 +165,7 @@ insert into applications(id,
         '60f9bd80d01913d3c74e',
         '6ec3749d9bc70dbacaa58ed378243bb01c655ed3',
         'https://localhost:3100/callback',
+        'http://localhost:3000/oauth2.0/authorize?',
         0,
         0
     ), (
@@ -168,6 +175,7 @@ insert into applications(id,
         'b4a970346a91d6467f47',
         'e5e009b4abdec1195235f1b918d40dd90740dbe6',
         'http://localhost:3000/callback',
+        'http://localhost:3000/',
         0,
         0
     ), (
@@ -177,6 +185,7 @@ insert into applications(id,
         'fa29064eafbe1dcbfd29',
         'd882d54a53bfcbe4d8f5d6bf11b617f762810c4e',
         'https://localhost:8100/callback',
+        'http://localhost:3000/oauth2.0/authorize?',
         0,
         0
     );
