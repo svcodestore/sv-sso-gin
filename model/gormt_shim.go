@@ -14,7 +14,7 @@ type OrganizationApplicationMgrType = *_OrganizationApplicationMgr
 
 type UsersWithoutModInfo struct {
 	ID        string    `gorm:"primaryKey;column:id;type:bigint;not null" json:"id"`
-	UUID      uuid.UUID `gorm:"index:user_uuid_index;column:uuid;type:binary(16);not null" json:"uuid"`
+	UUID      uuid.UUID `gorm:"unique;index:user_uuid_index;column:uuid;type:binary(16);not null" json:"uuid"`
 	LoginID   string    `gorm:"unique;column:login_id;type:varchar(16);not null" json:"loginId"`
 	Password  string    `gorm:"column:password;type:varchar(1024)" json:"-"`
 	Name      string    `gorm:"column:name;type:varchar(32)" json:"name"`
@@ -31,7 +31,7 @@ type UsersWithoutModInfo struct {
 
 type Users struct {
 	ID            string              `gorm:"primaryKey;column:id;type:bigint;not null" json:"id"`
-	UUID          uuid.UUID           `gorm:"index:user_uuid_index;column:uuid;type:binary(16);not null" json:"uuid"`
+	UUID          uuid.UUID           `gorm:"unique;index:user_uuid_index;column:uuid;type:binary(16);not null" json:"uuid"`
 	LoginID       string              `gorm:"unique;column:login_id;type:varchar(16);not null" json:"loginId"`
 	Password      string              `gorm:"column:password;type:varchar(1024)" json:"password"`
 	Name          string              `gorm:"column:name;type:varchar(32)" json:"name"`
@@ -50,7 +50,7 @@ type Users struct {
 
 type UsersToSave struct {
 	ID        string    `gorm:"primaryKey;column:id;type:bigint;not null" json:"id"`
-	UUID      []byte    `gorm:"index:user_uuid_index;column:uuid;type:binary(16);not null" json:"uuid"`
+	UUID      []byte    `gorm:"unique;index:user_uuid_index;column:uuid;type:binary(16);not null" json:"uuid"`
 	LoginID   string    `gorm:"unique;column:login_id;type:varchar(16);not null" json:"loginId"`
 	Password  string    `gorm:"column:password;type:varchar(1024)" json:"password"`
 	Name      string    `gorm:"column:name;type:varchar(32)" json:"name"`

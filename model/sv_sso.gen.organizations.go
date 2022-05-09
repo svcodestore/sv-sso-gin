@@ -241,22 +241,21 @@ func (obj *_OrganizationsMgr) GetBatchFromCode(codes []string) (results []*Organ
 }
 
 // GetFromName 通过name获取内容
-func (obj *_OrganizationsMgr) GetFromName(name string) (results []*Organizations, err error) {
-	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`name` = ?", name).Find(&results).Error
+func (obj *_OrganizationsMgr) GetFromName(name string) (result Organizations, err error) {
+	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`name` = ?", name).Find(&result).Error
 	if err == nil && obj.isRelated {
-		for i := 0; i < len(results); i++ {
-			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
-				if err != gorm.ErrRecordNotFound { // 非 没找到
-					return
-				}
+		if err = obj.New().Table("users").Where("id = ?", result.CreatedBy).Find(&result.CreatedByUser).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
 			}
-			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
-				if err != gorm.ErrRecordNotFound { // 非 没找到
-					return
-				}
+		}
+		if err = obj.New().Table("users").Where("id = ?", result.UpdatedBy).Find(&result.UpdatedByUser).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
 			}
 		}
 	}
+
 	return
 }
 
@@ -504,6 +503,25 @@ func (obj *_OrganizationsMgr) FetchByPrimaryKey(id string) (result Organizations
 // FetchUniqueByOrganizationsCodeUIndex primary or index 获取唯一内容
 func (obj *_OrganizationsMgr) FetchUniqueByOrganizationsCodeUIndex(code string) (result Organizations, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`code` = ?", code).Find(&result).Error
+	if err == nil && obj.isRelated {
+		if err = obj.New().Table("users").Where("id = ?", result.CreatedBy).Find(&result.CreatedByUser).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
+			}
+		}
+		if err = obj.New().Table("users").Where("id = ?", result.UpdatedBy).Find(&result.UpdatedByUser).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
+			}
+		}
+	}
+
+	return
+}
+
+// FetchUniqueByOrganizationsNameUIndex primary or index 获取唯一内容
+func (obj *_OrganizationsMgr) FetchUniqueByOrganizationsNameUIndex(name string) (result Organizations, err error) {
+	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`name` = ?", name).Find(&result).Error
 	if err == nil && obj.isRelated {
 		if err = obj.New().Table("users").Where("id = ?", result.CreatedBy).Find(&result.CreatedByUser).Error; err != nil { //
 			if err != gorm.ErrRecordNotFound { // 非 没找到

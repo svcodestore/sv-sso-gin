@@ -112,6 +112,11 @@ func (obj *_ApplicationsMgr) WithRedirectURIs(redirectURIs string) Option {
 	return optionFunc(func(o *options) { o.query["redirect_uris"] = redirectURIs })
 }
 
+// WithLoginURIs login_uris获取
+func (obj *_ApplicationsMgr) WithLoginURIs(loginURIs string) Option {
+	return optionFunc(func(o *options) { o.query["login_uris"] = loginURIs })
+}
+
 // WithTokenFormat token_format获取
 func (obj *_ApplicationsMgr) WithTokenFormat(tokenFormat string) Option {
 	return optionFunc(func(o *options) { o.query["token_format"] = tokenFormat })
@@ -271,22 +276,21 @@ func (obj *_ApplicationsMgr) GetBatchFromCode(codes []string) (results []*Applic
 }
 
 // GetFromName 通过name获取内容
-func (obj *_ApplicationsMgr) GetFromName(name string) (results []*Applications, err error) {
-	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`name` = ?", name).Find(&results).Error
+func (obj *_ApplicationsMgr) GetFromName(name string) (result Applications, err error) {
+	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`name` = ?", name).Find(&result).Error
 	if err == nil && obj.isRelated {
-		for i := 0; i < len(results); i++ {
-			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
-				if err != gorm.ErrRecordNotFound { // 非 没找到
-					return
-				}
+		if err = obj.New().Table("users").Where("id = ?", result.CreatedBy).Find(&result.CreatedByUser).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
 			}
-			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
-				if err != gorm.ErrRecordNotFound { // 非 没找到
-					return
-				}
+		}
+		if err = obj.New().Table("users").Where("id = ?", result.UpdatedBy).Find(&result.UpdatedByUser).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
 			}
 		}
 	}
+
 	return
 }
 
@@ -549,6 +553,46 @@ func (obj *_ApplicationsMgr) GetBatchFromRedirectURIs(redirectURIss []string) (r
 	return
 }
 
+// GetFromLoginURIs 通过login_uris获取内容
+func (obj *_ApplicationsMgr) GetFromLoginURIs(loginURIs string) (results []*Applications, err error) {
+	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`login_uris` = ?", loginURIs).Find(&results).Error
+	if err == nil && obj.isRelated {
+		for i := 0; i < len(results); i++ {
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+		}
+	}
+	return
+}
+
+// GetBatchFromLoginURIs 批量查找
+func (obj *_ApplicationsMgr) GetBatchFromLoginURIs(loginURIss []string) (results []*Applications, err error) {
+	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`login_uris` IN (?)", loginURIss).Find(&results).Error
+	if err == nil && obj.isRelated {
+		for i := 0; i < len(results); i++ {
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+		}
+	}
+	return
+}
+
 // GetFromTokenFormat 通过token_format获取内容
 func (obj *_ApplicationsMgr) GetFromTokenFormat(tokenFormat string) (results []*Applications, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`token_format` = ?", tokenFormat).Find(&results).Error
@@ -773,6 +817,25 @@ func (obj *_ApplicationsMgr) FetchByPrimaryKey(id string) (result Applications, 
 // FetchUniqueByApplicationsCodeUniqueIndexCode primary or index 获取唯一内容
 func (obj *_ApplicationsMgr) FetchUniqueByApplicationsCodeUniqueIndexCode(code string) (result Applications, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`code` = ?", code).Find(&result).Error
+	if err == nil && obj.isRelated {
+		if err = obj.New().Table("users").Where("id = ?", result.CreatedBy).Find(&result.CreatedByUser).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
+			}
+		}
+		if err = obj.New().Table("users").Where("id = ?", result.UpdatedBy).Find(&result.UpdatedByUser).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
+			}
+		}
+	}
+
+	return
+}
+
+// FetchUniqueByApplicationsNameUniqueIndexCode primary or index 获取唯一内容
+func (obj *_ApplicationsMgr) FetchUniqueByApplicationsNameUniqueIndexCode(name string) (result Applications, err error) {
+	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`name` = ?", name).Find(&result).Error
 	if err == nil && obj.isRelated {
 		if err = obj.New().Table("users").Where("id = ?", result.CreatedBy).Find(&result.CreatedByUser).Error; err != nil { //
 			if err != gorm.ErrRecordNotFound { // 非 没找到

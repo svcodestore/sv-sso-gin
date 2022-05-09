@@ -771,6 +771,25 @@ func (obj *_UsersMgr) FetchByPrimaryKey(id string) (result Users, err error) {
 	return
 }
 
+// FetchUniqueByUserUUIDUIndex primary or index 获取唯一内容
+func (obj *_UsersMgr) FetchUniqueByUserUUIDUIndex(uuid []byte) (result Users, err error) {
+	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`uuid` = ?", uuid).Find(&result).Error
+	if err == nil && obj.isRelated {
+		if err = obj.New().Table("users").Where("id = ?", result.CreatedBy).Find(&result.CreatedByUser).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
+			}
+		}
+		if err = obj.New().Table("users").Where("id = ?", result.UpdatedBy).Find(&result.UpdatedByUser).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
+			}
+		}
+	}
+
+	return
+}
+
 // FetchUniqueByUserLoginIDUIndex primary or index 获取唯一内容
 func (obj *_UsersMgr) FetchUniqueByUserLoginIDUIndex(loginID string) (result Users, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`login_id` = ?", loginID).Find(&result).Error
