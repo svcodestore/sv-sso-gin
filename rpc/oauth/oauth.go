@@ -90,7 +90,7 @@ func (s *OauthRpcServer) Logout(ctx context.Context, in *pb.LogoutRequest) (*pb.
 	if err == nil {
 		oauthService.DeleteAccessTokenFromRedis(claims.UserId)
 	}
-	return &pb.LogoutReply{LogoutResult: utils.ToRpcStruct(reply.FailWithDetail(nil, err.Error()))}, nil
+	return &pb.LogoutReply{LogoutResult: utils.ToRpcStruct(reply.Ok())}, nil
 }
 
 func (s *OauthRpcServer) IsUserLogin(ctx context.Context, in *pb.IsUserLoginRequest) (*pb.IsUserLoginReply, error) {
