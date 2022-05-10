@@ -1,18 +1,18 @@
 package initialize
 
 import (
-	"fmt"
-	"github.com/svcodestore/sv-sso-gin/global"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/keepalive"
 	"log"
 	"net"
 	"time"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/keepalive"
+
+	"github.com/svcodestore/sv-sso-gin/global"
 )
 
 func InitGrpc(registerPb func(server *grpc.Server)) (s *grpc.Server, err error) {
-	addr := fmt.Sprintf(":%d", global.CONFIG.System.RpcAddr)
-	fmt.Println(addr, "rpc addr")
+	addr := global.CONFIG.System.RpcAddr
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)

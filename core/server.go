@@ -1,12 +1,12 @@
 package core
 
 import (
-	"fmt"
+	"log"
+
 	"github.com/svcodestore/sv-sso-gin/global"
 	"github.com/svcodestore/sv-sso-gin/initialize"
 	"github.com/svcodestore/sv-sso-gin/model"
 	"github.com/svcodestore/sv-sso-gin/rpc"
-	"log"
 )
 
 type server interface {
@@ -40,14 +40,14 @@ func RunServer() {
 
 	routers := initialize.Routers()
 
-	address := fmt.Sprintf(":%d", global.CONFIG.System.Addr)
+	address := global.CONFIG.System.Addr
 	s := initServer(address, routers)
 
 	global.LOGGER.Error(s.ListenAndServe().Error())
 
 }
 
-func RunRpcServer()  {
+func RunRpcServer() {
 	commonInit()
 
 	db, err := global.DB.DB()
