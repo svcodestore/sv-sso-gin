@@ -79,13 +79,32 @@ func (s *OauthRpcServer) Login(ctx context.Context, in *pb.LoginRequest) (*pb.Lo
 	return &pb.LoginReply{OauthInfo: utils.ToRpcStruct(reply.OkWithData(info))}, nil
 }
 
-func (s OauthRpcServer) Logout(ctx context.Context, in *pb.LogoutRequest) (*pb.LogoutReply, error) {
+func (s *OauthRpcServer) Logout(ctx context.Context, in *pb.LogoutRequest) (*pb.LogoutReply, error) {
 	token := in.GetAccessToken()
 	j := utils.NewJWT()
-	claims, _ := j.ParseToken(token)
-	affected, err := oauthService.DeleteAccessTokenFromRedis(claims.UserId)
-	if err == nil && affected > 0 {
-		return &pb.LogoutReply{LogoutResult: utils.ToRpcStruct(reply.Ok())}, nil
+	claims, err := j.ParseToken(token)
+	if err == nil {
+		affected, err := oauthService.DeleteAccessTokenFromRedis(claims.UserId)
+		if err == nil && affected > 0 {
+			return &pb.LogoutReply{LogoutResult: utils.ToRpcStruct(reply.Ok())}, nil
+		}
 	}
-	return &pb.LogoutReply{LogoutResult: utils.ToRpcStruct(reply.Fail())}, nil
+	return &pb.LogoutReply{LogoutResult: utils.ToRpcStruct(reply.FailWithDetail(nil, err.Error()))}, nil
+}
+
+func (s *OauthRpcServer) IsUserLogin(ctx context.Context, in *pb.IsUserLoginRequest) (*pb.IsUserLoginReply, error) {
+	r := map[string]interface{}{
+		"isLogin": false,
+	}
+	token := in.GetAccessToken()
+	j := utils.NewJWT()
+	claims, err := j.ParseToken(token)
+
+	if err != nil {
+		return &pb.IsUserLoginReply{IsUserLoginResult: utils.ToRpcStruct(reply.FailWithDetail(r, err.Error()))}, nil
+	}
+	r["isLogin"] = oauthService.IsUserLogin(claims.UserId)
+	r["claims"] = claims
+
+	return &pb.IsUserLoginReply{IsUserLoginResult: utils.ToRpcStruct(reply.OkWithData(r))}, nil
 }

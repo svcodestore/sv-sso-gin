@@ -11,6 +11,7 @@ service Oauth {
   rpc GetOauthCode(GetOauthCodeRequest) returns (GetOauthCodeReply) {}
   rpc Login(LoginRequest) returns (LoginReply) {}
   rpc Logout(LogoutRequest) returns (LogoutReply) {}
+  rpc IsUserLogin(IsUserLoginRequest) returns (IsUserLoginReply) {}
 }
 
 message GetGrantCodeRequest {
@@ -52,4 +53,13 @@ message LogoutRequest {
 
 message LogoutReply {
   google.protobuf.Struct LogoutResult = 1;
+}
+
+
+message IsUserLoginRequest {
+  string accessToken = 1;
+}
+
+message IsUserLoginReply {
+  google.protobuf.Struct IsUserLoginResult = 1;
 }

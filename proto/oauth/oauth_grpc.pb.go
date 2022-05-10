@@ -26,6 +26,7 @@ type OauthClient interface {
 	GetOauthCode(ctx context.Context, in *GetOauthCodeRequest, opts ...grpc.CallOption) (*GetOauthCodeReply, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error)
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutReply, error)
+	IsUserLogin(ctx context.Context, in *IsUserLoginRequest, opts ...grpc.CallOption) (*IsUserLoginReply, error)
 }
 
 type oauthClient struct {
@@ -72,6 +73,15 @@ func (c *oauthClient) Logout(ctx context.Context, in *LogoutRequest, opts ...grp
 	return out, nil
 }
 
+func (c *oauthClient) IsUserLogin(ctx context.Context, in *IsUserLoginRequest, opts ...grpc.CallOption) (*IsUserLoginReply, error) {
+	out := new(IsUserLoginReply)
+	err := c.cc.Invoke(ctx, "/oauth.Oauth/IsUserLogin", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OauthServer is the server API for Oauth service.
 // All implementations must embed UnimplementedOauthServer
 // for forward compatibility
@@ -80,6 +90,7 @@ type OauthServer interface {
 	GetOauthCode(context.Context, *GetOauthCodeRequest) (*GetOauthCodeReply, error)
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
 	Logout(context.Context, *LogoutRequest) (*LogoutReply, error)
+	IsUserLogin(context.Context, *IsUserLoginRequest) (*IsUserLoginReply, error)
 	mustEmbedUnimplementedOauthServer()
 }
 
@@ -98,6 +109,9 @@ func (UnimplementedOauthServer) Login(context.Context, *LoginRequest) (*LoginRep
 }
 func (UnimplementedOauthServer) Logout(context.Context, *LogoutRequest) (*LogoutReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedOauthServer) IsUserLogin(context.Context, *IsUserLoginRequest) (*IsUserLoginReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsUserLogin not implemented")
 }
 func (UnimplementedOauthServer) mustEmbedUnimplementedOauthServer() {}
 
@@ -184,6 +198,24 @@ func _Oauth_Logout_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Oauth_IsUserLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsUserLoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OauthServer).IsUserLogin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/oauth.Oauth/IsUserLogin",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OauthServer).IsUserLogin(ctx, req.(*IsUserLoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Oauth_ServiceDesc is the grpc.ServiceDesc for Oauth service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +238,10 @@ var Oauth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Logout",
 			Handler:    _Oauth_Logout_Handler,
+		},
+		{
+			MethodName: "IsUserLogin",
+			Handler:    _Oauth_IsUserLogin_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
