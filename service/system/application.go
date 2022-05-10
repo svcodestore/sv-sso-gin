@@ -68,3 +68,43 @@ func (s *ApplicationService) ApplicationWithClientId(clientId string) (applicati
 	application, err = global.ApplicationMgr.GetFromClientID(clientId)
 	return
 }
+
+func (s *ApplicationService) ApplicationClientSecretWithClientId(clientId string) (clientSecret string, err error) {
+	var application *model.Applications
+	err = global.DB.Table(global.ApplicationMgr.GetTableName()).Select("client_secret").Where("client_id = ?", clientId).Find(&application).Error
+	clientSecret = application.ClientSecret
+
+	return
+}
+
+func (s *ApplicationService) ApplicationsWithOrganizationId(organizationId string) (applications []*model.Applications, err error) {
+	results, err := global.OrganizationApplicationMgr.GetFromOrganizationID(organizationId)
+	if err != nil {
+		return
+	}
+
+	l := len(results)
+	var ids = make([]string, l)
+	for i := 0; i < l; i++ {
+		ids[i] = results[i].ApplicationID
+	}
+	applications, err = global.ApplicationMgr.GetBatchFromID(ids)
+
+	return
+}
+
+func (s *ApplicationService) ApplicationsWithUserId(userId string) (applications []*model.Applications, err error) {
+	results, err := global.ApplicationUserMgr.GetFromUserID(userId)
+	if err != nil {
+		return
+	}
+
+	l := len(results)
+	var ids = make([]string, l)
+	for i := 0; i < l; i++ {
+		ids[i] = results[i].ApplicationID
+	}
+	applications, err = global.ApplicationMgr.GetBatchFromID(ids)
+
+	return
+}

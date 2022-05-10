@@ -2,18 +2,14 @@ package user
 
 import (
 	"context"
-	jsoniter "github.com/json-iterator/go"
-	"github.com/svcodestore/sv-sso-gin/model"
 	pb "github.com/svcodestore/sv-sso-gin/proto/user"
 	"github.com/svcodestore/sv-sso-gin/service"
+	"github.com/svcodestore/sv-sso-gin/utils"
 	"google.golang.org/grpc"
-	"google.golang.org/protobuf/types/known/structpb"
-	"log"
 )
 
 var (
 	userService = service.ServiceGroup.UserService
-	json = jsoniter.ConfigCompatibleWithStandardLibrary
 )
 
 type UserRpcServer struct {
@@ -25,23 +21,11 @@ func RegisterUserRpcServer(s *grpc.Server) {
 }
 
 func (s *UserRpcServer) GetUserById(ctx context.Context, in *pb.GetUserByIdRequest) (*pb.GetUserByIdReply, error) {
-	user, e := userService.UserWithId(model.Users{
-		ID: in.GetId(),
-	})
+	user, e := userService.UserWithId(in.GetId())
 	if e != nil {
 		return nil, e
 	}
-	b, e := json.Marshal(user)
-	if e != nil {
-		return nil, e
-	}
-	var m map[string]interface{}
-	json.Unmarshal(b, &m)
-	u, err := structpb.NewStruct(m)
-	if err != nil {
-		return nil, e
-	}
+	u := utils.ToRpcStruct(user)
 
-	log.Printf("Received user id: %v", in.GetId())
 	return &pb.GetUserByIdReply{User: u}, nil
 }

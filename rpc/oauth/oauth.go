@@ -28,6 +28,10 @@ func (s *OauthRpcServer) GetGrantCode(ctx context.Context, in *pb.GetGrantCodeRe
 	if err != nil {
 		return &pb.GetGrantCodeReply{GrantCode: utils.ToRpcStruct(reply.FailWithDetail(nil, err.Error()))}, nil
 	}
+	_, err = oauthService.CanAccessSystem(claims.UserId, in.GetClientId())
+	if err != nil {
+		return &pb.GetGrantCodeReply{GrantCode: utils.ToRpcStruct(reply.FailWithDetail(nil, err.Error()))}, nil
+	}
 	grantedCode, err := oauthService.DoGenerateGrantCode(claims.UserId, in.GetClientId())
 	if err != nil {
 		return &pb.GetGrantCodeReply{GrantCode: utils.ToRpcStruct(reply.FailWithDetail(nil, err.Error()))}, nil
@@ -84,10 +88,7 @@ func (s *OauthRpcServer) Logout(ctx context.Context, in *pb.LogoutRequest) (*pb.
 	j := utils.NewJWT()
 	claims, err := j.ParseToken(token)
 	if err == nil {
-		affected, err := oauthService.DeleteAccessTokenFromRedis(claims.UserId)
-		if err == nil && affected > 0 {
-			return &pb.LogoutReply{LogoutResult: utils.ToRpcStruct(reply.Ok())}, nil
-		}
+		oauthService.DeleteAccessTokenFromRedis(claims.UserId)
 	}
 	return &pb.LogoutReply{LogoutResult: utils.ToRpcStruct(reply.FailWithDetail(nil, err.Error()))}, nil
 }

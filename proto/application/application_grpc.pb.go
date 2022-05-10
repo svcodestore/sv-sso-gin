@@ -22,7 +22,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ApplicationClient interface {
+	GetApplicationsByOrganizationId(ctx context.Context, in *GetApplicationsByOrganizationIdRequest, opts ...grpc.CallOption) (*GetApplicationsByOrganizationIdReply, error)
 	GetApplicationById(ctx context.Context, in *GetApplicationByIdRequest, opts ...grpc.CallOption) (*GetApplicationByIdReply, error)
+	GetApplicationSecretByClientId(ctx context.Context, in *GetApplicationSecretByClientIdRequest, opts ...grpc.CallOption) (*GetApplicationSecretByClientIdReply, error)
 }
 
 type applicationClient struct {
@@ -31,6 +33,15 @@ type applicationClient struct {
 
 func NewApplicationClient(cc grpc.ClientConnInterface) ApplicationClient {
 	return &applicationClient{cc}
+}
+
+func (c *applicationClient) GetApplicationsByOrganizationId(ctx context.Context, in *GetApplicationsByOrganizationIdRequest, opts ...grpc.CallOption) (*GetApplicationsByOrganizationIdReply, error) {
+	out := new(GetApplicationsByOrganizationIdReply)
+	err := c.cc.Invoke(ctx, "/application.Application/GetApplicationsByOrganizationId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *applicationClient) GetApplicationById(ctx context.Context, in *GetApplicationByIdRequest, opts ...grpc.CallOption) (*GetApplicationByIdReply, error) {
@@ -42,11 +53,22 @@ func (c *applicationClient) GetApplicationById(ctx context.Context, in *GetAppli
 	return out, nil
 }
 
+func (c *applicationClient) GetApplicationSecretByClientId(ctx context.Context, in *GetApplicationSecretByClientIdRequest, opts ...grpc.CallOption) (*GetApplicationSecretByClientIdReply, error) {
+	out := new(GetApplicationSecretByClientIdReply)
+	err := c.cc.Invoke(ctx, "/application.Application/GetApplicationSecretByClientId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ApplicationServer is the server API for Application service.
 // All implementations must embed UnimplementedApplicationServer
 // for forward compatibility
 type ApplicationServer interface {
+	GetApplicationsByOrganizationId(context.Context, *GetApplicationsByOrganizationIdRequest) (*GetApplicationsByOrganizationIdReply, error)
 	GetApplicationById(context.Context, *GetApplicationByIdRequest) (*GetApplicationByIdReply, error)
+	GetApplicationSecretByClientId(context.Context, *GetApplicationSecretByClientIdRequest) (*GetApplicationSecretByClientIdReply, error)
 	mustEmbedUnimplementedApplicationServer()
 }
 
@@ -54,8 +76,14 @@ type ApplicationServer interface {
 type UnimplementedApplicationServer struct {
 }
 
+func (UnimplementedApplicationServer) GetApplicationsByOrganizationId(context.Context, *GetApplicationsByOrganizationIdRequest) (*GetApplicationsByOrganizationIdReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetApplicationsByOrganizationId not implemented")
+}
 func (UnimplementedApplicationServer) GetApplicationById(context.Context, *GetApplicationByIdRequest) (*GetApplicationByIdReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetApplicationById not implemented")
+}
+func (UnimplementedApplicationServer) GetApplicationSecretByClientId(context.Context, *GetApplicationSecretByClientIdRequest) (*GetApplicationSecretByClientIdReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetApplicationSecretByClientId not implemented")
 }
 func (UnimplementedApplicationServer) mustEmbedUnimplementedApplicationServer() {}
 
@@ -68,6 +96,24 @@ type UnsafeApplicationServer interface {
 
 func RegisterApplicationServer(s grpc.ServiceRegistrar, srv ApplicationServer) {
 	s.RegisterService(&Application_ServiceDesc, srv)
+}
+
+func _Application_GetApplicationsByOrganizationId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetApplicationsByOrganizationIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApplicationServer).GetApplicationsByOrganizationId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/application.Application/GetApplicationsByOrganizationId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApplicationServer).GetApplicationsByOrganizationId(ctx, req.(*GetApplicationsByOrganizationIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Application_GetApplicationById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -88,6 +134,24 @@ func _Application_GetApplicationById_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Application_GetApplicationSecretByClientId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetApplicationSecretByClientIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApplicationServer).GetApplicationSecretByClientId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/application.Application/GetApplicationSecretByClientId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApplicationServer).GetApplicationSecretByClientId(ctx, req.(*GetApplicationSecretByClientIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Application_ServiceDesc is the grpc.ServiceDesc for Application service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -96,8 +160,16 @@ var Application_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ApplicationServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "GetApplicationsByOrganizationId",
+			Handler:    _Application_GetApplicationsByOrganizationId_Handler,
+		},
+		{
 			MethodName: "GetApplicationById",
 			Handler:    _Application_GetApplicationById_Handler,
+		},
+		{
+			MethodName: "GetApplicationSecretByClientId",
+			Handler:    _Application_GetApplicationSecretByClientId_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

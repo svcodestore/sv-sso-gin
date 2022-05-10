@@ -14,7 +14,7 @@ var userService = service.ServiceGroup.UserService
 func CurrentUser(c *gin.Context) {
 	claims, _ := c.Get("claims")
 	id := claims.(*request.CustomClaims).UserId
-	user, _ := userService.UserWithId(model.Users{ID: id})
+	user, _ := userService.UserWithId(id)
 	response.OkWithData(user, c)
 }
 
@@ -161,6 +161,6 @@ func GetAllUser(c *gin.Context) {
 
 func GetUserById(c *gin.Context) {
 	id := c.Param("id")
-	user, _ := userService.UserWithId(model.Users{ID: id})
+	user, _ := userService.UserWithId(id)
 	response.OkWithData(user, c)
 }

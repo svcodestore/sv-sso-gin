@@ -1,18 +1,15 @@
 package application
 
 import (
-	jsoniter "github.com/json-iterator/go"
 	pb "github.com/svcodestore/sv-sso-gin/proto/application"
 	"github.com/svcodestore/sv-sso-gin/service"
+	"github.com/svcodestore/sv-sso-gin/utils"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"google.golang.org/protobuf/types/known/structpb"
-	"log"
 )
 
 var (
 	applicationService = service.ServiceGroup.ApplicationService
-	json = jsoniter.ConfigCompatibleWithStandardLibrary
 )
 
 type ApplicationRpcServer struct {
@@ -28,20 +25,29 @@ func (s *ApplicationRpcServer) GetApplicationById(ctx context.Context, in *pb.Ge
 	if e != nil {
 		return nil, e
 	}
-	b, e := json.Marshal(application)
+	a := utils.ToRpcStruct(application)
+
+	return &pb.GetApplicationByIdReply{Application: a}, nil
+}
+
+func (s *ApplicationRpcServer) GetApplicationSecretByClientId(ctx context.Context, in *pb.GetApplicationSecretByClientIdRequest) (*pb.GetApplicationSecretByClientIdReply, error) {
+	clientSecret, e := applicationService.ApplicationClientSecretWithClientId(in.GetClientId())
 	if e != nil {
-		return nil, e
-	}
-	var m map[string]interface{}
-	e = json.Unmarshal(b, &m)
-	if e != nil {
-		return nil, e
-	}
-	a, err := structpb.NewStruct(m)
-	if err != nil {
 		return nil, e
 	}
 
-	log.Printf("Received application id: %v", in.GetId())
-	return &pb.GetApplicationByIdReply{Application: a}, nil
+	return &pb.GetApplicationSecretByClientIdReply{ClientSecret: clientSecret}, nil
+}
+
+func (s *ApplicationRpcServer) GetApplicationsByOrganizationId(ctx context.Context, in *pb.GetApplicationsByOrganizationIdRequest) (*pb.GetApplicationsByOrganizationIdReply, error) {
+	applications, e := applicationService.ApplicationsWithOrganizationId(in.GetOrganizationId())
+	if e != nil {
+		return nil, e
+	}
+
+	a := utils.ToRpcStruct(applications)
+
+	return &pb.GetApplicationsByOrganizationIdReply{
+		Applications: a,
+	}, nil
 }

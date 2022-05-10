@@ -2,7 +2,6 @@ package system
 
 import (
 	"errors"
-
 	uuid "github.com/satori/go.uuid"
 
 	"github.com/svcodestore/sv-sso-gin/global"
@@ -32,7 +31,7 @@ func (s *UserService) DoLogin(u model.Users) (user model.Users, err error) {
 
 	user, err = global.UserMgr.GetFromLoginID(u.LoginID)
 	if c.PasswordVerify(u.Password, user.Password) {
-		return user, err
+		return
 	}
 
 	return user, errors.New("invalid password")
@@ -118,7 +117,28 @@ func (s *UserService) AllUser() (users []*model.Users, err error) {
 	return
 }
 
-func (s *UserService) UserWithId(u model.Users) (user model.Users, err error) {
-	user, err = global.UserMgr.GetFromID(u.ID)
+func (s *UserService) UserWithId(id string) (user model.Users, err error) {
+	user, err = global.UserMgr.GetFromID(id)
+	return
+}
+
+func (s *UserService) UserWithIdAndApplicationId(id, applicationId string) (user model.Users, err error) {
+	users, err := global.ApplicationUserMgr.GetFromApplicationID(applicationId)
+	if err != nil {
+		return
+	}
+	userCount := len(users)
+	if userCount == 0 {
+		err = errors.New("not registered")
+		return
+	}
+	for i := 0; i < userCount; i++ {
+		if users[i].UserID == id {
+			user, err = userService.UserWithId(id)
+		} else {
+			err = errors.New("not registered")
+			return
+		}
+	}
 	return
 }

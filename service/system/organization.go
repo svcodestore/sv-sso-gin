@@ -60,3 +60,19 @@ func (s *OrganizationService) OrganizationWithId(id string) (organization model.
 	organization, err = global.OrganizationMgr.GetFromID(id)
 	return
 }
+
+func (s *OrganizationService) OrganizationsWithApplicationId(applicationId string) (organizations []*model.Organizations, err error) {
+	results, err := global.OrganizationApplicationMgr.GetFromApplicationID(applicationId)
+	if err != nil {
+		return
+	}
+
+	l := len(results)
+	var ids = make([]string, l)
+	for i := 0; i < l; i++ {
+		ids[i] = results[i].OrganizationID
+	}
+	organizations, err = global.OrganizationMgr.GetBatchFromID(ids)
+
+	return
+}

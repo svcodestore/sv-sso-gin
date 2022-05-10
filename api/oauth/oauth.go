@@ -1,6 +1,7 @@
 package oauth
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/svcodestore/sv-sso-gin/utils"
 	"strings"
@@ -30,14 +31,19 @@ func GetGrantCode(c *gin.Context) {
 			token := t[1]
 			j := utils.NewJWT()
 			claims, err := j.ParseToken(token)
-			grantedCode, err := oauthService.DoGenerateGrantCode(claims.UserId, clientId)
-
+			_, err = oauthService.CanAccessSystem(claims.UserId, clientId)
+			fmt.Println(err, "CanAccessSystem", claims.UserId)
 			if err == nil {
-				response.OkWithData(gin.H{
-					"code": grantedCode,
-				}, c)
-				return
+				grantedCode, err := oauthService.DoGenerateGrantCode(claims.UserId, clientId)
+
+				if err == nil {
+					response.OkWithData(gin.H{
+						"code": grantedCode,
+					}, c)
+					return
+				}
 			}
+			oauthService.DeleteAccessTokenFromRedis(claims.UserId)
 			response.FailWithMessage(err.Error(), c)
 		}
 	}

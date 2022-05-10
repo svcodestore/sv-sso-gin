@@ -7,7 +7,17 @@ package application;
 import "google/protobuf/struct.proto";
 
 service Application {
+  rpc GetApplicationsByOrganizationId(GetApplicationsByOrganizationIdRequest) returns (GetApplicationsByOrganizationIdReply) {}
   rpc GetApplicationById(GetApplicationByIdRequest) returns (GetApplicationByIdReply) {}
+  rpc GetApplicationSecretByClientId(GetApplicationSecretByClientIdRequest) returns (GetApplicationSecretByClientIdReply) {}
+}
+
+message GetApplicationsByOrganizationIdRequest {
+  string organizationId = 1;
+}
+
+message GetApplicationsByOrganizationIdReply {
+  google.protobuf.Struct Applications = 1;
 }
 
 message GetApplicationByIdRequest {
@@ -16,4 +26,12 @@ message GetApplicationByIdRequest {
 
 message GetApplicationByIdReply {
   google.protobuf.Struct Application = 1;
+}
+
+message GetApplicationSecretByClientIdRequest {
+  string clientId = 1;
+}
+
+message GetApplicationSecretByClientIdReply {
+  string ClientSecret = 1;
 }
