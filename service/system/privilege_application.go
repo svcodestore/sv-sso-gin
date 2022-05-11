@@ -39,6 +39,8 @@ func (s *PrivilegeApplicationService) AccessibleApplications(userId string) (app
 	for i := 0; i < organizationCount; i++ {
 		if organizations[i].ID == "0" {
 			isGlobalUser = true
+			apps, err = applicationService.AllApplication()
+			return
 		}
 		organizationIds[i] = organizations[i].ID
 	}
