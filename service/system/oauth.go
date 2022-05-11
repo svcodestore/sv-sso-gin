@@ -22,13 +22,6 @@ const (
 	IssuedRefreshTokenRedisKey = "issuedRefreshToken"
 )
 
-var (
-	applicationService  = ApplicationService{}
-	jwtService          = JwtService{}
-	userService         = UserService{}
-	organizationService = OrganizationService{}
-)
-
 type OauthService struct {
 }
 
@@ -197,75 +190,5 @@ func (s *OauthService) DoOauthLogin(username, password, loginType, clientId stri
 		})
 		return
 	}
-	return
-}
-
-func (s *OauthService) IsGlobalUser(userId string) (isGlobalUser bool, err error) {
-	applications, err := applicationService.ApplicationsWithUserId(userId)
-	if err != nil {
-		return
-	}
-	applicationCount := len(applications)
-	if applicationCount == 0 {
-		err = errors.New("not registered")
-		return
-	}
-
-	for i := 0; i < applicationCount; i++ {
-		organizations, e := organizationService.OrganizationsWithApplicationId(applications[i].ID)
-		if e != nil {
-			err = e
-			return
-		}
-		if len(organizations) > 0 {
-			for j := 0; j < len(organizations); j++ {
-				if organizations[i].ID == "0" {
-					isGlobalUser = true
-					return
-				}
-			}
-		}
-	}
-	return
-}
-
-func (s *OauthService) CanAccessSystem(userId, clientId string) (can bool, err error) {
-	application, e := applicationService.ApplicationWithClientId(clientId)
-	if e != nil {
-		err = e
-		return
-	}
-	if application.ClientID != clientId {
-		err = errors.New("application nonexistent")
-		return
-	}
-	_, e = userService.UserWithIdAndApplicationId(userId, application.ID)
-	// 当前应用没有此用户
-	if e != nil {
-		// 此用户是否是全局用户
-		isGlobal, er := s.IsGlobalUser(userId)
-		if !isGlobal {
-			if er != nil {
-				err = er
-			} else {
-				err = errors.New("not registered")
-			}
-			return
-		}
-		can = true
-		return
-	}
-	organizations, e := organizationService.OrganizationsWithApplicationId(application.ID)
-	if e != nil {
-		err = e
-		return
-	}
-	organizationCount := len(organizations)
-	if organizationCount == 0 {
-		err = errors.New("this system is not registered")
-		return
-	}
-	can = true
-
 	return
 }

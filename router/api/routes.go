@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/svcodestore/sv-sso-gin/api/application"
 	"github.com/svcodestore/sv-sso-gin/api/organization"
+	"github.com/svcodestore/sv-sso-gin/api/privilege"
 	"github.com/svcodestore/sv-sso-gin/api/user"
 )
 
@@ -51,4 +52,7 @@ func (*Routes) Init(g *gin.RouterGroup) {
 	applicationUserG.DELETE("", application.DeleteApplicationUserById)
 	applicationUserG.GET("", application.GetApplicationUserById)
 	applicationUserG.PATCH("", application.UpdateApplicationUserById)
+
+	privilegeApplicationG := g.Group("privilege-application")
+	privilegeApplicationG.GET("/:id", privilege.GetAccessibleApplicationsByUserId)
 }

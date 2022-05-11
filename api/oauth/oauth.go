@@ -1,20 +1,11 @@
 package oauth
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/svcodestore/sv-sso-gin/utils"
 	"strings"
 
 	"github.com/svcodestore/sv-sso-gin/model/common/response"
-	"github.com/svcodestore/sv-sso-gin/service"
-)
-
-var (
-	oauthService       = service.ServiceGroup.OauthService
-	applicationService = service.ServiceGroup.ApplicationService
-	jwtService         = service.ServiceGroup.JwtService
-	userService        = service.ServiceGroup.UserService
 )
 
 func GetGrantCode(c *gin.Context) {
@@ -31,19 +22,23 @@ func GetGrantCode(c *gin.Context) {
 			token := t[1]
 			j := utils.NewJWT()
 			claims, err := j.ParseToken(token)
-			_, err = oauthService.CanAccessSystem(claims.UserId, clientId)
-			fmt.Println(err, "CanAccessSystem", claims.UserId)
 			if err == nil {
-				grantedCode, err := oauthService.DoGenerateGrantCode(claims.UserId, clientId)
+				_, err = privilegeService.CanAccessSystem(claims.UserId, clientId)
 
 				if err == nil {
-					response.OkWithData(gin.H{
-						"code": grantedCode,
-					}, c)
-					return
+					grantedCode, e := oauthService.DoGenerateGrantCode(claims.UserId, clientId)
+					if e == nil {
+						response.OkWithData(gin.H{
+							"code": grantedCode,
+						}, c)
+						return
+					}
+					err = e
+				} else {
+					// 用户没有注册系统则注销登录
+					oauthService.DeleteAccessTokenFromRedis(claims.UserId)
 				}
 			}
-			oauthService.DeleteAccessTokenFromRedis(claims.UserId)
 			response.FailWithMessage(err.Error(), c)
 		}
 	}

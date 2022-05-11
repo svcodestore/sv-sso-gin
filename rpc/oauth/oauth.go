@@ -3,14 +3,9 @@ package oauth
 import (
 	"github.com/svcodestore/sv-sso-gin/model/rpc/reply"
 	pb "github.com/svcodestore/sv-sso-gin/proto/oauth"
-	"github.com/svcodestore/sv-sso-gin/service"
 	"github.com/svcodestore/sv-sso-gin/utils"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-)
-
-var (
-	oauthService = service.ServiceGroup.OauthService
 )
 
 type OauthRpcServer struct {
@@ -28,7 +23,7 @@ func (s *OauthRpcServer) GetGrantCode(ctx context.Context, in *pb.GetGrantCodeRe
 	if err != nil {
 		return &pb.GetGrantCodeReply{GrantCode: utils.ToRpcStruct(reply.FailWithDetail(nil, err.Error()))}, nil
 	}
-	_, err = oauthService.CanAccessSystem(claims.UserId, in.GetClientId())
+	_, err = privilegeService.CanAccessSystem(claims.UserId, in.GetClientId())
 	if err != nil {
 		return &pb.GetGrantCodeReply{GrantCode: utils.ToRpcStruct(reply.FailWithDetail(nil, err.Error()))}, nil
 	}

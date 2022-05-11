@@ -12,8 +12,6 @@ import (
 
 type JwtService struct{}
 
-var oauthService = OauthService{}
-
 func (jwtService *JwtService) GenerateToken(c request.BaseClaims) (accessToken, refreshToken string, err error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(168 * time.Hour)

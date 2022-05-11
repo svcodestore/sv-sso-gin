@@ -40,7 +40,7 @@ func (s *ApplicationRpcServer) GetApplicationSecretByClientId(ctx context.Contex
 }
 
 func (s *ApplicationRpcServer) GetApplicationsByOrganizationId(ctx context.Context, in *pb.GetApplicationsByOrganizationIdRequest) (*pb.GetApplicationsByOrganizationIdReply, error) {
-	applications, e := applicationService.ApplicationsWithOrganizationId(in.GetOrganizationId())
+	applications, e := applicationService.ApplicationsWithOrganizationIds(in.GetOrganizationId())
 	if e != nil {
 		return nil, e
 	}

@@ -61,8 +61,8 @@ func (s *OrganizationService) OrganizationWithId(id string) (organization model.
 	return
 }
 
-func (s *OrganizationService) OrganizationsWithApplicationId(applicationId string) (organizations []*model.Organizations, err error) {
-	results, err := global.OrganizationApplicationMgr.GetFromApplicationID(applicationId)
+func (s *OrganizationService) OrganizationsWithApplicationIds(applicationIds ...string) (organizations []*model.Organizations, err error) {
+	results, err := global.OrganizationApplicationMgr.GetBatchFromApplicationID(applicationIds)
 	if err != nil {
 		return
 	}

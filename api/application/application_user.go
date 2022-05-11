@@ -4,10 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/svcodestore/sv-sso-gin/model"
 	"github.com/svcodestore/sv-sso-gin/model/common/response"
-	"github.com/svcodestore/sv-sso-gin/service"
 )
-
-var applicationUserService = service.ServiceGroup.ApplicationUserService
 
 func CreateApplicationUser(c *gin.Context) {
 	applicationId := c.PostForm("applicationId")

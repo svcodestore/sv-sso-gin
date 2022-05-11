@@ -77,8 +77,8 @@ func (s *ApplicationService) ApplicationClientSecretWithClientId(clientId string
 	return
 }
 
-func (s *ApplicationService) ApplicationsWithOrganizationId(organizationId string) (applications []*model.Applications, err error) {
-	results, err := global.OrganizationApplicationMgr.GetFromOrganizationID(organizationId)
+func (s *ApplicationService) ApplicationsWithOrganizationIds(organizationIds ...string) (applications []*model.Applications, err error) {
+	results, err := global.OrganizationApplicationMgr.GetBatchFromOrganizationID(organizationIds)
 	if err != nil {
 		return
 	}

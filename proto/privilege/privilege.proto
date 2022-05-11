@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "github.com/svcodestore/sv-sso-gin/proto/user";
+
+package privilege;
+
+import "google/protobuf/struct.proto";
+
+service Privilege {
+  rpc GetAccessibleApplicationsByUserId(GetAccessibleApplicationsByUserIdRequest) returns (GetAccessibleApplicationsByUserIdReply) {}
+}
+
+message GetAccessibleApplicationsByUserIdRequest {
+  string userId = 1;
+}
+
+message GetAccessibleApplicationsByUserIdReply {
+  google.protobuf.Struct Applications = 1;
+}

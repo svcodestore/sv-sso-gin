@@ -5,10 +5,7 @@ import (
 	"github.com/svcodestore/sv-sso-gin/global"
 	"github.com/svcodestore/sv-sso-gin/model"
 	"github.com/svcodestore/sv-sso-gin/model/common/response"
-	"github.com/svcodestore/sv-sso-gin/service"
 )
-
-var applicationService = service.ServiceGroup.ApplicationService
 
 func CreateApplication(c *gin.Context) {
 	currentUserId := c.PostForm("currentUserId")
