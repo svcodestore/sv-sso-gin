@@ -2,6 +2,7 @@ package application
 
 import (
 	"github.com/gin-gonic/gin"
+
 	"github.com/svcodestore/sv-sso-gin/global"
 	"github.com/svcodestore/sv-sso-gin/model"
 	"github.com/svcodestore/sv-sso-gin/model/common/response"
@@ -58,6 +59,7 @@ func UpdateApplicationById(c *gin.Context) {
 	internalUrl := c.PostForm("internalUrl")
 	homepageUrl := c.PostForm("homepageUrl")
 	status := c.PostForm("status")
+	loginUris := c.PostForm("loginUris")
 	redirectUris := c.PostForm("redirectUris")
 	tokenFormat := c.DefaultPostForm("tokenFormat", "JWT")
 
@@ -84,10 +86,13 @@ func UpdateApplicationById(c *gin.Context) {
 		isOnlyUpdateStatus = false
 		updatingApplication.HomepageURL = homepageUrl
 	}
-
 	if redirectUris != "" {
 		isOnlyUpdateStatus = false
 		updatingApplication.RedirectURIs = redirectUris
+	}
+	if loginUris != "" {
+		isOnlyUpdateStatus = false
+		updatingApplication.LoginURIs = loginUris
 	}
 	if tokenFormat != "" {
 		isOnlyUpdateStatus = false
