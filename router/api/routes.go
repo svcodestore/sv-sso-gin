@@ -12,6 +12,9 @@ type Routes struct {
 }
 
 func (*Routes) Init(g *gin.RouterGroup) {
+	myG := g.Group("my")
+	myG.GET("/applications", privilege.GetCurrentAccessibleApplications)
+
 	usersG := g.Group("users")
 	usersG.GET("", user.GetAllUser)
 	userG := g.Group("user")
