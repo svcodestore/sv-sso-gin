@@ -179,7 +179,7 @@ insert into applications(id,
         'b4a970346a91d6467f47',
         'e5e009b4abdec1195235f1b918d40dd90740dbe6',
         'http://localhost:3000/callback',
-        'http://localhost:3000/',
+        'http://localhost:3000/oauth2.0/authorize?',
         0,
         0
     ), (
