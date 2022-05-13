@@ -142,3 +142,20 @@ func (s *UserService) UserWithIdAndApplicationId(id, applicationId string) (user
 	}
 	return
 }
+
+func (s *UserService) UsersWithApplicationIds(applicationIds ...string) (users []*model.Users, err error) {
+	maps, err := global.ApplicationUserMgr.GetBatchFromApplicationID(applicationIds)
+	if err != nil {
+		return
+	}
+	mapCount := len(maps)
+	if mapCount == 0 {
+		return
+	}
+	var ids = make([]string, mapCount)
+	for i := 0; i < mapCount; i++ {
+		ids[i] = maps[i].UserID
+	}
+	users, err = global.UserMgr.GetBatchFromID(ids)
+	return
+}

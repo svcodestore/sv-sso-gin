@@ -8,6 +8,8 @@ import "google/protobuf/struct.proto";
 
 service User {
   rpc GetUserById(GetUserByIdRequest) returns (GetUserByIdReply) {}
+  rpc GetAllUser(GetAllUserRequest) returns (GetAllUserReply) {}
+  rpc GetUsersByApplicationId(GetUsersByApplicationIdRequest) returns (GetUsersByApplicationIdReply) {}
 }
 
 message GetUserByIdRequest {
@@ -16,4 +18,19 @@ message GetUserByIdRequest {
 
 message GetUserByIdReply {
   google.protobuf.Struct User = 1;
+}
+
+message GetAllUserRequest {
+}
+
+message GetAllUserReply {
+  google.protobuf.Struct Users = 1;
+}
+
+message GetUsersByApplicationIdRequest {
+  string applicationId = 1;
+}
+
+message GetUsersByApplicationIdReply {
+  google.protobuf.Struct Users = 1;
 }

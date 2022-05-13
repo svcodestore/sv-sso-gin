@@ -29,3 +29,23 @@ func (s *UserRpcServer) GetUserById(ctx context.Context, in *pb.GetUserByIdReque
 
 	return &pb.GetUserByIdReply{User: u}, nil
 }
+
+func (s *UserRpcServer) GetAllUser(ctx context.Context, in *pb.GetAllUserRequest) (*pb.GetAllUserReply, error) {
+	users, e := userService.AllUser()
+	if e != nil {
+		return nil, e
+	}
+	u := utils.ToRpcStruct(users)
+
+	return &pb.GetAllUserReply{Users: u}, nil
+}
+
+func (s *UserRpcServer) GetUsersByApplicationId(ctx context.Context, in *pb.GetUsersByApplicationIdRequest) (*pb.GetUsersByApplicationIdReply, error) {
+	users, e := userService.UsersWithApplicationIds(in.GetApplicationId())
+	if e != nil {
+		return nil, e
+	}
+	u := utils.ToRpcStruct(users)
+
+	return &pb.GetUsersByApplicationIdReply{Users: u}, nil
+}
