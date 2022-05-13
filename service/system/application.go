@@ -108,3 +108,33 @@ func (s *ApplicationService) ApplicationsWithUserId(userId string) (applications
 
 	return
 }
+
+func (s *ApplicationService) AvailableApplications() (applications []*model.Applications, err error) {
+	results, err := s.AllApplication()
+	if err != nil {
+		return
+	}
+
+	for i := 0; i < len(results); i++ {
+		if results[i].Status {
+			applications = append(applications, results[i])
+		}
+	}
+
+	return
+}
+
+func (s *ApplicationService) IsAvailableApplications(applicationIds ...string) (applications []*model.Applications, err error) {
+	apps, err := global.ApplicationMgr.GetBatchFromID(applicationIds)
+	if err != nil {
+		return
+	}
+
+	for i := 0; i < len(apps); i++ {
+		if apps[i].Status {
+			applications = append(applications, apps[i])
+		}
+	}
+
+	return
+}

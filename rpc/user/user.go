@@ -9,7 +9,8 @@ import (
 )
 
 var (
-	userService = service.ServiceGroup.UserService
+	userService       = service.ServiceGroup.UserService
+	permissionService = service.ServiceGroup.PermissionUserService
 )
 
 type UserRpcServer struct {
@@ -48,4 +49,24 @@ func (s *UserRpcServer) GetUsersByApplicationId(ctx context.Context, in *pb.GetU
 	u := utils.ToRpcStruct(users)
 
 	return &pb.GetUsersByApplicationIdReply{Users: u}, nil
+}
+
+func (s *UserRpcServer) GetAvailableUsers(ctx context.Context, in *pb.GetAvailableUsersRequest) (*pb.GetAvailableUsersReply, error) {
+	users, e := permissionService.AvailableUsersWithApplicationIds()
+	if e != nil {
+		return nil, e
+	}
+	u := utils.ToRpcStruct(users)
+
+	return &pb.GetAvailableUsersReply{Users: u}, nil
+}
+
+func (s *UserRpcServer) GetAvailableUsersByApplicationId(ctx context.Context, in *pb.GetAvailableUsersByApplicationIdRequest) (*pb.GetAvailableUsersByApplicationIdReply, error) {
+	users, e := permissionService.AvailableUsersWithApplicationIds(in.GetApplicationId())
+	if e != nil {
+		return nil, e
+	}
+	u := utils.ToRpcStruct(users)
+
+	return &pb.GetAvailableUsersByApplicationIdReply{Users: u}, nil
 }

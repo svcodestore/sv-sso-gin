@@ -25,6 +25,7 @@ type ApplicationClient interface {
 	GetApplicationsByOrganizationId(ctx context.Context, in *GetApplicationsByOrganizationIdRequest, opts ...grpc.CallOption) (*GetApplicationsByOrganizationIdReply, error)
 	GetApplicationById(ctx context.Context, in *GetApplicationByIdRequest, opts ...grpc.CallOption) (*GetApplicationByIdReply, error)
 	GetApplicationSecretByClientId(ctx context.Context, in *GetApplicationSecretByClientIdRequest, opts ...grpc.CallOption) (*GetApplicationSecretByClientIdReply, error)
+	GetAvailableApplications(ctx context.Context, in *GetAvailableApplicationsRequest, opts ...grpc.CallOption) (*GetAvailableApplicationsReply, error)
 }
 
 type applicationClient struct {
@@ -62,6 +63,15 @@ func (c *applicationClient) GetApplicationSecretByClientId(ctx context.Context, 
 	return out, nil
 }
 
+func (c *applicationClient) GetAvailableApplications(ctx context.Context, in *GetAvailableApplicationsRequest, opts ...grpc.CallOption) (*GetAvailableApplicationsReply, error) {
+	out := new(GetAvailableApplicationsReply)
+	err := c.cc.Invoke(ctx, "/application.Application/GetAvailableApplications", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ApplicationServer is the server API for Application service.
 // All implementations must embed UnimplementedApplicationServer
 // for forward compatibility
@@ -69,6 +79,7 @@ type ApplicationServer interface {
 	GetApplicationsByOrganizationId(context.Context, *GetApplicationsByOrganizationIdRequest) (*GetApplicationsByOrganizationIdReply, error)
 	GetApplicationById(context.Context, *GetApplicationByIdRequest) (*GetApplicationByIdReply, error)
 	GetApplicationSecretByClientId(context.Context, *GetApplicationSecretByClientIdRequest) (*GetApplicationSecretByClientIdReply, error)
+	GetAvailableApplications(context.Context, *GetAvailableApplicationsRequest) (*GetAvailableApplicationsReply, error)
 	mustEmbedUnimplementedApplicationServer()
 }
 
@@ -84,6 +95,9 @@ func (UnimplementedApplicationServer) GetApplicationById(context.Context, *GetAp
 }
 func (UnimplementedApplicationServer) GetApplicationSecretByClientId(context.Context, *GetApplicationSecretByClientIdRequest) (*GetApplicationSecretByClientIdReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetApplicationSecretByClientId not implemented")
+}
+func (UnimplementedApplicationServer) GetAvailableApplications(context.Context, *GetAvailableApplicationsRequest) (*GetAvailableApplicationsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAvailableApplications not implemented")
 }
 func (UnimplementedApplicationServer) mustEmbedUnimplementedApplicationServer() {}
 
@@ -152,6 +166,24 @@ func _Application_GetApplicationSecretByClientId_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Application_GetAvailableApplications_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAvailableApplicationsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApplicationServer).GetAvailableApplications(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/application.Application/GetAvailableApplications",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApplicationServer).GetAvailableApplications(ctx, req.(*GetAvailableApplicationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Application_ServiceDesc is the grpc.ServiceDesc for Application service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +202,10 @@ var Application_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetApplicationSecretByClientId",
 			Handler:    _Application_GetApplicationSecretByClientId_Handler,
+		},
+		{
+			MethodName: "GetAvailableApplications",
+			Handler:    _Application_GetAvailableApplications_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

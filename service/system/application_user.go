@@ -40,3 +40,18 @@ func (s *ApplicationUserService) ApplicationUserWithId(o *model.ApplicationUser)
 	applicationUser, err = global.ApplicationUserMgr.FetchByPrimaryKey(o.ApplicationID, o.UserID)
 	return
 }
+
+func (s *ApplicationUserService) AvailableApplicationUsers() (results []*model.ApplicationUser, err error) {
+	applicationUsers, err := s.AllApplicationUser()
+	if err != nil {
+		return
+	}
+
+	for i := 0; i < len(applicationUsers); i++ {
+		if applicationUsers[i].Status {
+			results = append(results, applicationUsers[i])
+		}
+	}
+
+	return
+}

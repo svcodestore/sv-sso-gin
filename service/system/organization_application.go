@@ -44,3 +44,18 @@ func (s *OrganizationApplicationService) OrganizationApplicationWithId(o *model.
 	organizationApplication, err = global.OrganizationApplicationMgr.FetchByPrimaryKey(o.OrganizationID, o.ApplicationID)
 	return
 }
+
+func (s *OrganizationApplicationService) AvailableOrganizationApplications() (results []*model.OrganizationApplication, err error) {
+	organizationApplications, err := s.AllOrganizationApplication()
+	if err != nil {
+		return
+	}
+
+	for i := 0; i < len(organizationApplications); i++ {
+		if organizationApplications[i].Status {
+			results = append(results, organizationApplications[i])
+		}
+	}
+
+	return
+}

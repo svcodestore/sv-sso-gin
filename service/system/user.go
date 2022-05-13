@@ -159,3 +159,33 @@ func (s *UserService) UsersWithApplicationIds(applicationIds ...string) (users [
 	users, err = global.UserMgr.GetBatchFromID(ids)
 	return
 }
+
+func (s *UserService) AvailableUsers() (users []*model.Users, err error) {
+	results, err := s.AllUser()
+	if err != nil {
+		return
+	}
+
+	for i := 0; i < len(results); i++ {
+		if results[i].Status {
+			users = append(users, results[i])
+		}
+	}
+
+	return
+}
+
+func (s *UserService) IsAvailableUsers(userIds ...string) (users []*model.Users, err error) {
+	u, err := global.UserMgr.GetBatchFromID(userIds)
+	if err != nil {
+		return
+	}
+
+	for i := 0; i < len(u); i++ {
+		if u[i].Status {
+			users = append(users, u[i])
+		}
+	}
+
+	return
+}

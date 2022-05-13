@@ -51,3 +51,16 @@ func (s *ApplicationRpcServer) GetApplicationsByOrganizationId(ctx context.Conte
 		Applications: a,
 	}, nil
 }
+
+func (s *ApplicationRpcServer) GetAvailableApplications(ctx context.Context, in *pb.GetAvailableApplicationsRequest) (*pb.GetAvailableApplicationsReply, error) {
+	applications, e := applicationService.AvailableApplications()
+	if e != nil {
+		return nil, e
+	}
+
+	a := utils.ToRpcStruct(applications)
+
+	return &pb.GetAvailableApplicationsReply{
+		Applications: a,
+	}, nil
+}

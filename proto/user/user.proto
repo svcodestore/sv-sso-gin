@@ -10,6 +10,8 @@ service User {
   rpc GetUserById(GetUserByIdRequest) returns (GetUserByIdReply) {}
   rpc GetAllUser(GetAllUserRequest) returns (GetAllUserReply) {}
   rpc GetUsersByApplicationId(GetUsersByApplicationIdRequest) returns (GetUsersByApplicationIdReply) {}
+  rpc GetAvailableUsers(GetAvailableUsersRequest) returns (GetAvailableUsersReply) {}
+  rpc GetAvailableUsersByApplicationId(GetAvailableUsersByApplicationIdRequest) returns (GetAvailableUsersByApplicationIdReply) {}
 }
 
 message GetUserByIdRequest {
@@ -32,5 +34,20 @@ message GetUsersByApplicationIdRequest {
 }
 
 message GetUsersByApplicationIdReply {
+  google.protobuf.Struct Users = 1;
+}
+
+message GetAvailableUsersRequest {
+}
+
+message GetAvailableUsersReply {
+  google.protobuf.Struct Users = 1;
+}
+
+message GetAvailableUsersByApplicationIdRequest {
+  string applicationId = 1;
+}
+
+message GetAvailableUsersByApplicationIdReply {
   google.protobuf.Struct Users = 1;
 }

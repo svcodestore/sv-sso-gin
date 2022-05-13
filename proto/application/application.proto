@@ -10,6 +10,7 @@ service Application {
   rpc GetApplicationsByOrganizationId(GetApplicationsByOrganizationIdRequest) returns (GetApplicationsByOrganizationIdReply) {}
   rpc GetApplicationById(GetApplicationByIdRequest) returns (GetApplicationByIdReply) {}
   rpc GetApplicationSecretByClientId(GetApplicationSecretByClientIdRequest) returns (GetApplicationSecretByClientIdReply) {}
+  rpc GetAvailableApplications(GetAvailableApplicationsRequest) returns (GetAvailableApplicationsReply) {}
 }
 
 message GetApplicationsByOrganizationIdRequest {
@@ -34,4 +35,12 @@ message GetApplicationSecretByClientIdRequest {
 
 message GetApplicationSecretByClientIdReply {
   string ClientSecret = 1;
+}
+
+
+message GetAvailableApplicationsRequest {
+}
+
+message GetAvailableApplicationsReply {
+  google.protobuf.Struct Applications = 1;
 }

@@ -76,3 +76,32 @@ func (s *OrganizationService) OrganizationsWithApplicationIds(applicationIds ...
 
 	return
 }
+
+func (s *OrganizationService) AvailableOrganizations() (organizations []*model.Organizations, err error) {
+	results, err := s.AllOrganization()
+	if err != nil {
+		return
+	}
+
+	for i := 0; i < len(results); i++ {
+		if results[i].Status {
+			organizations = append(organizations, results[i])
+		}
+	}
+
+	return
+}
+
+func (s *OrganizationService) IsAvailableOrganizations(organizationIds ...string) (organizations []*model.Organizations, err error) {
+	o, err := global.OrganizationMgr.GetBatchFromID(organizationIds)
+	if err != nil {
+		return
+	}
+
+	for i := 0; i < len(o); i++ {
+		if o[i].Status {
+			organizations = append(organizations, o[i])
+		}
+	}
+	return
+}

@@ -6,7 +6,6 @@ import (
 )
 
 type PrivilegeApplicationService struct {
-
 }
 
 func (s *PrivilegeApplicationService) AccessibleApplications(userId string) (apps []*model.Applications, isGlobalUser bool, err error) {
@@ -45,6 +44,30 @@ func (s *PrivilegeApplicationService) AccessibleApplications(userId string) (app
 		organizationIds[i] = organizations[i].ID
 	}
 	apps, err = applicationService.ApplicationsWithOrganizationIds(organizationIds...)
+
+	return
+}
+
+func (s *PrivilegeApplicationService) AvailableApplications() (apps []*model.Applications, err error) {
+	organizationApplication, err := organizationApplicationService.AllOrganizationApplication()
+	if err != nil {
+		return
+	}
+
+	cnt := len(organizationApplication)
+	if cnt == 0 {
+		return
+	}
+
+	for i := 0; i < cnt; i++ {
+		if organizationApplication[i].Status {
+			o, _ := organizationService.IsAvailableOrganizations(organizationApplication[i].OrganizationID)
+			a, _ := applicationService.IsAvailableApplications(organizationApplication[i].ApplicationID)
+			if len(o) == 1 && len(a) == 1 {
+				apps = append(apps, a...)
+			}
+		}
+	}
 
 	return
 }
