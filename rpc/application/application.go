@@ -9,7 +9,8 @@ import (
 )
 
 var (
-	applicationService = service.ServiceGroup.ApplicationService
+	applicationService          = service.ServiceGroup.ApplicationService
+	privilegeApplicationService = service.ServiceGroup.PrivilegeApplicationService
 )
 
 type ApplicationRpcServer struct {
@@ -45,7 +46,9 @@ func (s *ApplicationRpcServer) GetApplicationsByOrganizationId(ctx context.Conte
 		return nil, e
 	}
 
-	a := utils.ToRpcStruct(applications)
+	a := utils.ToRpcStruct(map[string]interface{}{
+		"data": applications,
+	})
 
 	return &pb.GetApplicationsByOrganizationIdReply{
 		Applications: a,
@@ -58,8 +61,9 @@ func (s *ApplicationRpcServer) GetAvailableApplications(ctx context.Context, in 
 		return nil, e
 	}
 
-	a := utils.ToRpcStruct(applications)
-
+	a := utils.ToRpcStruct(map[string]interface{}{
+		"data": applications,
+	})
 	return &pb.GetAvailableApplicationsReply{
 		Applications: a,
 	}, nil
