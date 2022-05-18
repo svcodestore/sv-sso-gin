@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"github.com/svcodestore/sv-sso-gin/model/rpc/reply"
 	pb "github.com/svcodestore/sv-sso-gin/proto/user"
 	"github.com/svcodestore/sv-sso-gin/service"
 	"github.com/svcodestore/sv-sso-gin/utils"
@@ -66,7 +67,7 @@ func (s *UserRpcServer) GetAvailableUsersByApplicationId(ctx context.Context, in
 	if e != nil {
 		return nil, e
 	}
-	u := utils.ToRpcStruct(users)
+	u := utils.ToRpcStruct(reply.OkWithData(users))
 
 	return &pb.GetAvailableUsersByApplicationIdReply{Users: u}, nil
 }

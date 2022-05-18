@@ -1,6 +1,7 @@
 package application
 
 import (
+	"github.com/svcodestore/sv-sso-gin/model/rpc/reply"
 	pb "github.com/svcodestore/sv-sso-gin/proto/application"
 	"github.com/svcodestore/sv-sso-gin/service"
 	"github.com/svcodestore/sv-sso-gin/utils"
@@ -46,9 +47,7 @@ func (s *ApplicationRpcServer) GetApplicationsByOrganizationId(ctx context.Conte
 		return nil, e
 	}
 
-	a := utils.ToRpcStruct(map[string]interface{}{
-		"data": applications,
-	})
+	a := utils.ToRpcStruct(reply.OkWithData(applications))
 
 	return &pb.GetApplicationsByOrganizationIdReply{
 		Applications: a,
@@ -61,9 +60,7 @@ func (s *ApplicationRpcServer) GetAvailableApplications(ctx context.Context, in 
 		return nil, e
 	}
 
-	a := utils.ToRpcStruct(map[string]interface{}{
-		"data": applications,
-	})
+	a := utils.ToRpcStruct(reply.OkWithData(applications))
 	return &pb.GetAvailableApplicationsReply{
 		Applications: a,
 	}, nil
