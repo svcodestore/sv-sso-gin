@@ -52,7 +52,7 @@ func (s *OrganizationApplicationService) AvailableOrganizationApplications() (re
 	}
 
 	for i := 0; i < len(organizationApplications); i++ {
-		if organizationApplications[i].Status {
+		if organizationApplications[i].Status == 1 {
 			results = append(results, organizationApplications[i])
 		}
 	}

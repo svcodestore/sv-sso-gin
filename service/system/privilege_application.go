@@ -60,7 +60,7 @@ func (s *PrivilegeApplicationService) AvailableApplications() (apps []*model.App
 	}
 
 	for i := 0; i < cnt; i++ {
-		if organizationApplication[i].Status {
+		if organizationApplication[i].Status == 1 {
 			o, _ := organizationService.IsAvailableOrganizations(organizationApplication[i].OrganizationID)
 			a, _ := applicationService.IsAvailableApplications(organizationApplication[i].ApplicationID)
 			if len(o) == 1 && len(a) == 1 {

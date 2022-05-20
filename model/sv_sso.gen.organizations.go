@@ -83,7 +83,7 @@ func (obj *_OrganizationsMgr) WithName(name string) Option {
 }
 
 // WithStatus status获取
-func (obj *_OrganizationsMgr) WithStatus(status bool) Option {
+func (obj *_OrganizationsMgr) WithStatus(status uint8) Option {
 	return optionFunc(func(o *options) { o.query["status"] = status })
 }
 
@@ -280,7 +280,7 @@ func (obj *_OrganizationsMgr) GetBatchFromName(names []string) (results []*Organ
 }
 
 // GetFromStatus 通过status获取内容
-func (obj *_OrganizationsMgr) GetFromStatus(status bool) (results []*Organizations, err error) {
+func (obj *_OrganizationsMgr) GetFromStatus(status uint8) (results []*Organizations, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`status` = ?", status).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -300,7 +300,7 @@ func (obj *_OrganizationsMgr) GetFromStatus(status bool) (results []*Organizatio
 }
 
 // GetBatchFromStatus 批量查找
-func (obj *_OrganizationsMgr) GetBatchFromStatus(statuss []bool) (results []*Organizations, err error) {
+func (obj *_OrganizationsMgr) GetBatchFromStatus(statuss []uint8) (results []*Organizations, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`status` IN (?)", statuss).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {

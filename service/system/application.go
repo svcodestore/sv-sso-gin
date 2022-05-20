@@ -116,7 +116,7 @@ func (s *ApplicationService) AvailableApplications() (applications []*model.Appl
 	}
 
 	for i := 0; i < len(results); i++ {
-		if results[i].Status {
+		if results[i].Status == 1 {
 			applications = append(applications, results[i])
 		}
 	}
@@ -131,7 +131,7 @@ func (s *ApplicationService) IsAvailableApplications(applicationIds ...string) (
 	}
 
 	for i := 0; i < len(apps); i++ {
-		if apps[i].Status {
+		if apps[i].Status == 1 {
 			applications = append(applications, apps[i])
 		}
 	}

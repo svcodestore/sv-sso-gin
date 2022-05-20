@@ -48,7 +48,7 @@ func (s *ApplicationUserService) AvailableApplicationUsers() (results []*model.A
 	}
 
 	for i := 0; i < len(applicationUsers); i++ {
-		if applicationUsers[i].Status {
+		if applicationUsers[i].Status == 1 {
 			results = append(results, applicationUsers[i])
 		}
 	}

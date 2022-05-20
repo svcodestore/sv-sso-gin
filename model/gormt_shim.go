@@ -22,7 +22,7 @@ type UsersWithoutModInfo struct {
 	Phone     string    `gorm:"column:phone;type:varchar(16)" json:"phone"`
 	Email     string    `gorm:"column:email;type:varchar(1024)" json:"email"`
 	Lang      string    `gorm:"column:lang;type:char(5);default:zh_CN" json:"lang"`
-	Status    bool      `gorm:"column:status;type:tinyint(1);not null;default:1" json:"status"`
+	Status    uint8     `gorm:"column:status;type:tinyint(1);not null;default:1" json:"status"`
 	CreatedAt time.Time `gorm:"column:created_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"-"`
 	CreatedBy string    `gorm:"column:created_by;type:bigint;not null" json:"-"`
 	UpdatedAt time.Time `gorm:"column:updated_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"-"`
@@ -39,7 +39,7 @@ type Users struct {
 	Phone         string              `gorm:"column:phone;type:varchar(16)" json:"phone"`
 	Email         string              `gorm:"column:email;type:varchar(1024)" json:"email"`
 	Lang          string              `gorm:"column:lang;type:char(5);default:zh_CN" json:"lang"`
-	Status        bool                `gorm:"column:status;type:tinyint(1);not null;default:1" json:"status"`
+	Status        uint8               `gorm:"column:status;type:tinyint(1);not null;default:1" json:"status"`
 	CreatedAt     time.Time           `gorm:"column:created_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"createdAt"`
 	CreatedBy     string              `gorm:"column:created_by;type:bigint;not null" json:"-"`
 	CreatedByUser UsersWithoutModInfo `gorm:"joinForeignKey:created_by;foreignKey:CreatedBy;reference:CreatedBy" json:"createdByUser"`
@@ -58,7 +58,7 @@ type UsersToSave struct {
 	Phone     string    `gorm:"column:phone;type:varchar(16)" json:"phone"`
 	Email     string    `gorm:"column:email;type:varchar(1024)" json:"email"`
 	Lang      string    `gorm:"column:lang;type:char(5);default:zh_CN" json:"lang"`
-	Status    bool      `gorm:"column:status;type:tinyint(1);not null;default:1" json:"status"`
+	Status    uint8     `gorm:"column:status;type:tinyint(1);not null;default:1" json:"status"`
 	CreatedAt time.Time `gorm:"column:created_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"createdAt"`
 	CreatedBy string    `gorm:"column:created_by;type:bigint;not null" json:"createdBy"`
 	UpdatedAt time.Time `gorm:"column:updated_at;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"updatedAt"`

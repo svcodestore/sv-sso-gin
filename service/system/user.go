@@ -167,7 +167,7 @@ func (s *UserService) AvailableUsers() (users []*model.Users, err error) {
 	}
 
 	for i := 0; i < len(results); i++ {
-		if results[i].Status {
+		if results[i].Status == 1 {
 			users = append(users, results[i])
 		}
 	}
@@ -182,7 +182,7 @@ func (s *UserService) IsAvailableUsers(userIds ...string) (users []*model.Users,
 	}
 
 	for i := 0; i < len(u); i++ {
-		if u[i].Status {
+		if u[i].Status == 1 {
 			users = append(users, u[i])
 		}
 	}

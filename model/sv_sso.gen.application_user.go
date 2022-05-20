@@ -98,7 +98,7 @@ func (obj *_ApplicationUserMgr) WithUserID(userID string) Option {
 }
 
 // WithStatus status获取
-func (obj *_ApplicationUserMgr) WithStatus(status bool) Option {
+func (obj *_ApplicationUserMgr) WithStatus(status uint8) Option {
 	return optionFunc(func(o *options) { o.query["status"] = status })
 }
 
@@ -318,7 +318,7 @@ func (obj *_ApplicationUserMgr) GetBatchFromUserID(userIDs []string) (results []
 }
 
 // GetFromStatus 通过status获取内容
-func (obj *_ApplicationUserMgr) GetFromStatus(status bool) (results []*ApplicationUser, err error) {
+func (obj *_ApplicationUserMgr) GetFromStatus(status uint8) (results []*ApplicationUser, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`status` = ?", status).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
@@ -348,7 +348,7 @@ func (obj *_ApplicationUserMgr) GetFromStatus(status bool) (results []*Applicati
 }
 
 // GetBatchFromStatus 批量查找
-func (obj *_ApplicationUserMgr) GetBatchFromStatus(statuss []bool) (results []*ApplicationUser, err error) {
+func (obj *_ApplicationUserMgr) GetBatchFromStatus(statuss []uint8) (results []*ApplicationUser, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`status` IN (?)", statuss).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {

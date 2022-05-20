@@ -48,11 +48,15 @@ func UpdateApplicationUserById(c *gin.Context) {
 	status := c.DefaultPostForm("status", "true")
 	currentUserId := c.PostForm("currentUserId")
 	uid := currentUserId
+	var statusValue uint8
+	if status == "true" {
+		statusValue = 1
+	}
 
 	applicationUser, err := applicationUserService.UpdateApplicationUserWithId(&model.ApplicationUser{
 		ApplicationID: applicationId,
 		UserID:        userId,
-		Status:        status == "true",
+		Status:        statusValue,
 		CreatedBy:     uid,
 		UpdatedBy:     uid,
 	})
@@ -79,7 +83,7 @@ func GetApplicationUserById(c *gin.Context) {
 	userId := c.Query("userId")
 	applicationUser, err := applicationUserService.ApplicationUserWithId(&model.ApplicationUser{
 		ApplicationID: applicationId,
-		UserID: userId,
+		UserID:        userId,
 	})
 
 	if err != nil {

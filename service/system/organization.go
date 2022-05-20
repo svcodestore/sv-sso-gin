@@ -84,7 +84,7 @@ func (s *OrganizationService) AvailableOrganizations() (organizations []*model.O
 	}
 
 	for i := 0; i < len(results); i++ {
-		if results[i].Status {
+		if results[i].Status == 1 {
 			organizations = append(organizations, results[i])
 		}
 	}
@@ -99,7 +99,7 @@ func (s *OrganizationService) IsAvailableOrganizations(organizationIds ...string
 	}
 
 	for i := 0; i < len(o); i++ {
-		if o[i].Status {
+		if o[i].Status == 1 {
 			organizations = append(organizations, o[i])
 		}
 	}

@@ -30,7 +30,7 @@ func (s *PermissionUserService) AvailableUsersWithApplicationIds(appIds ...strin
 		return
 	}
 	for i := 0; i < len(u); i++ {
-		if u[i].Status {
+		if u[i].Status == 1 {
 			users = append(users, u[i])
 		}
 	}

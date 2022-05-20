@@ -19,13 +19,17 @@ func CreateApplication(c *gin.Context) {
 	status := c.PostForm("status")
 	redirectUris := c.PostForm("redirectUris")
 	tokenFormat := c.DefaultPostForm("tokenFormat", "JWT")
+	var statusValue uint8
+	if status == "true" {
+		statusValue = 1
+	}
 
 	application, err := applicationService.CreateApplication(&model.Applications{
 		Code:         code,
 		Name:         name,
 		InternalURL:  internalUrl,
 		HomepageURL:  homepageUrl,
-		Status:       status == "true",
+		Status:       statusValue,
 		RedirectURIs: redirectUris,
 		TokenFormat:  tokenFormat,
 		CreatedBy:    uid,
