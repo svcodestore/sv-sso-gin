@@ -50,12 +50,16 @@ func GetOauthCode(c *gin.Context) {
 	clientSecret := c.Query("client_secret")
 	code := c.Query("code")
 	redirectUri := c.Query("redirect_uri")
-
 	if grantType == "authorization_code" {
 		if code == "" {
 			response.UnAuthWithMessage("empty code", c)
 			return
 		}
+
+		if clientSecret == "" {
+			clientSecret, _ = applicationService.ApplicationClientSecretWithClientId(clientId)
+		}
+
 		accessToken, refreshToken, user, err := oauthService.DoGenerateOauthCode(clientId, clientSecret, code, redirectUri)
 		if err == nil {
 			response.OkWithData(gin.H{
