@@ -16,8 +16,9 @@ redis:
 system:
   id:
   env: public
-  addr: 8888
-  rpc-addr: 50088
+  addr: :8888
+  rpc-addr: :50088
+  auth-rpc-addr: :50068
   db-type: mysql
   oss-type: local
   use-multipoint: false

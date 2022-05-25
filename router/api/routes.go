@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/svcodestore/sv-sso-gin/api/application"
+	"github.com/svcodestore/sv-sso-gin/api/auth"
 	"github.com/svcodestore/sv-sso-gin/api/organization"
 	"github.com/svcodestore/sv-sso-gin/api/privilege"
 	"github.com/svcodestore/sv-sso-gin/api/user"
@@ -23,6 +24,9 @@ func (*Routes) Init(g *gin.RouterGroup) {
 	userG.GET("/:id", user.GetUserById)
 	userG.PATCH("/:id", user.UpdateUser)
 	userG.GET("/current-user", user.CurrentUser)
+
+	userMenusG := g.Group("user-menus")
+	userMenusG.GET("", auth.GetAuthMenusByApplicationIdAndUserId)
 
 	organizationsG := g.Group("organizations")
 	organizationsG.GET("", organization.GetAllOrganization)
