@@ -9,7 +9,7 @@ type ApplicationUserService struct {
 }
 
 func (s *ApplicationUserService) CreateApplicationUser(o *model.ApplicationUser) (applicationUser model.ApplicationUser, err error) {
-	result := global.ApplicationUserMgr.Create(o)
+	result := model.ApplicationUserMgr(global.DB).Create(o)
 	if result.Error != nil {
 		err = result.Error
 		return
@@ -32,12 +32,12 @@ func (s *ApplicationUserService) UpdateApplicationUserWithId(o *model.Applicatio
 }
 
 func (s *ApplicationUserService) AllApplicationUser() (applicationUsers []*model.ApplicationUser, err error) {
-	applicationUsers, err = global.ApplicationUserMgr.Gets()
+	applicationUsers, err = model.ApplicationUserMgr(global.DB).Gets()
 	return
 }
 
 func (s *ApplicationUserService) ApplicationUserWithId(o *model.ApplicationUser) (applicationUser model.ApplicationUser, err error) {
-	applicationUser, err = global.ApplicationUserMgr.FetchByPrimaryKey(o.ApplicationID, o.UserID)
+	applicationUser, err = model.ApplicationUserMgr(global.DB).FetchByPrimaryKey(o.ApplicationID, o.UserID)
 	return
 }
 

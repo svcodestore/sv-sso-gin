@@ -29,7 +29,7 @@ func (s *UserService) Login(usr, pwd string) (model.Users, error) {
 func (s *UserService) DoLogin(u model.Users) (user model.Users, err error) {
 	var c CryptoService
 
-	user, err = global.UserMgr.GetFromLoginID(u.LoginID)
+	user, err = model.UsersMgr(global.DB).GetFromLoginID(u.LoginID)
 	if c.PasswordVerify(u.Password, user.Password) {
 		return
 	}
@@ -51,7 +51,7 @@ func (s *UserService) RegisterUser(u model.UsersToSave) (user model.Users, err e
 		return
 	}
 
-	user, err = global.UserMgr.GetFromID(u.ID)
+	user, err = model.UsersMgr(global.DB).GetFromID(u.ID)
 	return
 }
 
@@ -68,7 +68,7 @@ func (s *UserService) CreateUser(u *model.UsersToSave) (user model.Users, err er
 		return
 	}
 
-	user, err = global.UserMgr.GetFromID(u.ID)
+	user, err = model.UsersMgr(global.DB).GetFromID(u.ID)
 	return
 }
 
@@ -85,12 +85,10 @@ func (s *UserService) UpdateUser(u model.UsersToSave) (user model.Users, err err
 		p, _ := c.PasswordHash(u.Password)
 		u.Password = p
 	}
-	db := global.UserMgr.Where("id = ?", id).Updates(u)
+	db := model.UsersMgr(global.DB).Where("id = ?", id).Updates(u)
 
 	if db.RowsAffected == 1 {
-		user, err = global.UserMgr.GetFromID(id)
-		// problem
-		global.UserMgr = model.UsersMgr(utils.Gorm())
+		user, err = model.UsersMgr(global.DB).GetFromID(id)
 		return
 	}
 
@@ -99,31 +97,29 @@ func (s *UserService) UpdateUser(u model.UsersToSave) (user model.Users, err err
 }
 
 func (s *UserService) UpdateUserStatus(status bool, id, updatedBy string) (user model.Users, err error) {
-	err = global.UserMgr.Where("id = ?", id).Select("status").Updates(map[string]interface{}{
+	err = model.UsersMgr(global.DB).Where("id = ?", id).Select("status").Updates(map[string]interface{}{
 		"status":     status,
 		"updated_by": updatedBy,
 	}).Error
 	if err != nil {
 		return
 	}
-	user, err = global.UserMgr.GetFromID(id)
-	// problem
-	global.UserMgr = model.UsersMgr(utils.Gorm())
+	user, err = model.UsersMgr(global.DB).GetFromID(id)
 	return
 }
 
 func (s *UserService) AllUser() (users []*model.Users, err error) {
-	users, err = global.UserMgr.Gets()
+	users, err = model.UsersMgr(global.DB).Gets()
 	return
 }
 
 func (s *UserService) UserWithId(id string) (user model.Users, err error) {
-	user, err = global.UserMgr.GetFromID(id)
+	user, err = model.UsersMgr(global.DB).GetFromID(id)
 	return
 }
 
 func (s *UserService) UserWithIdAndApplicationId(id, applicationId string) (user model.Users, err error) {
-	users, err := global.ApplicationUserMgr.GetFromApplicationID(applicationId)
+	users, err := model.ApplicationUserMgr(global.DB).GetFromApplicationID(applicationId)
 	if err != nil {
 		return
 	}
@@ -144,7 +140,7 @@ func (s *UserService) UserWithIdAndApplicationId(id, applicationId string) (user
 }
 
 func (s *UserService) UsersWithApplicationIds(applicationIds ...string) (users []*model.Users, err error) {
-	maps, err := global.ApplicationUserMgr.GetBatchFromApplicationID(applicationIds)
+	maps, err := model.ApplicationUserMgr(global.DB).GetBatchFromApplicationID(applicationIds)
 	if err != nil {
 		return
 	}
@@ -156,7 +152,7 @@ func (s *UserService) UsersWithApplicationIds(applicationIds ...string) (users [
 	for i := 0; i < mapCount; i++ {
 		ids[i] = maps[i].UserID
 	}
-	users, err = global.UserMgr.GetBatchFromID(ids)
+	users, err = model.UsersMgr(global.DB).GetBatchFromID(ids)
 	return
 }
 
@@ -176,7 +172,7 @@ func (s *UserService) AvailableUsers() (users []*model.Users, err error) {
 }
 
 func (s *UserService) IsAvailableUsers(userIds ...string) (users []*model.Users, err error) {
-	u, err := global.UserMgr.GetBatchFromID(userIds)
+	u, err := model.UsersMgr(global.DB).GetBatchFromID(userIds)
 	if err != nil {
 		return
 	}

@@ -9,7 +9,7 @@ type OrganizationApplicationService struct {
 }
 
 func (s *OrganizationApplicationService) CreateOrganizationApplication(o *model.OrganizationApplication) (organizationApplication model.OrganizationApplication, err error) {
-	result := global.OrganizationApplicationMgr.Create(o)
+	result := model.OrganizationApplicationMgr(global.DB).Create(o)
 	if result.Error != nil {
 		err = result.Error
 		return
@@ -26,7 +26,7 @@ func (s *OrganizationApplicationService) DeleteOrganizationApplicationWithId(o *
 }
 
 func (s *OrganizationApplicationService) UpdateOrganizationApplicationWithId(o *model.OrganizationApplication) (organizationApplication model.OrganizationApplication, err error) {
-	db := global.OrganizationApplicationMgr.Where("organization_id = ? and application_id = ?", o.OrganizationID, o.ApplicationID).Updates(o)
+	db := model.OrganizationApplicationMgr(global.DB).Where("organization_id = ? and application_id = ?", o.OrganizationID, o.ApplicationID).Updates(o)
 	if db.RowsAffected == 1 {
 		organizationApplication, err = s.OrganizationApplicationWithId(o)
 		return
@@ -36,12 +36,12 @@ func (s *OrganizationApplicationService) UpdateOrganizationApplicationWithId(o *
 }
 
 func (s *OrganizationApplicationService) AllOrganizationApplication() (organizationApplications []*model.OrganizationApplication, err error) {
-	organizationApplications, err = global.OrganizationApplicationMgr.Gets()
+	organizationApplications, err = model.OrganizationApplicationMgr(global.DB).Gets()
 	return
 }
 
 func (s *OrganizationApplicationService) OrganizationApplicationWithId(o *model.OrganizationApplication) (organizationApplication model.OrganizationApplication, err error) {
-	organizationApplication, err = global.OrganizationApplicationMgr.FetchByPrimaryKey(o.OrganizationID, o.ApplicationID)
+	organizationApplication, err = model.OrganizationApplicationMgr(global.DB).FetchByPrimaryKey(o.OrganizationID, o.ApplicationID)
 	return
 }
 

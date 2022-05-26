@@ -11,7 +11,7 @@ type OrganizationService struct {
 
 func (s *OrganizationService) CreateOrganization(o *model.Organizations) (organization model.Organizations, err error) {
 	o.ID = utils.SnowflakeId(int64(utils.RandRange(1, 1024))).String()
-	result := global.OrganizationMgr.Create(o)
+	result := model.OrganizationsMgr(global.DB).Create(o)
 	if result.Error != nil {
 		err = result.Error
 		return
@@ -29,9 +29,8 @@ func (s *OrganizationService) DeleteOrganizationWithId(o *model.Organizations) (
 func (s *OrganizationService) UpdateOrganizationWithId(o *model.Organizations) (organization model.Organizations, err error) {
 	id := o.ID
 	o.ID = ""
-	db := global.OrganizationMgr.Where("id = ?", id).Updates(o)
+	db := model.OrganizationsMgr(global.DB).Where("id = ?", id).Updates(o)
 	if db.RowsAffected == 1 {
-		global.OrganizationMgr = model.OrganizationsMgr(utils.Gorm())
 		return s.OrganizationWithId(id)
 	}
 	err = db.Error
@@ -39,30 +38,29 @@ func (s *OrganizationService) UpdateOrganizationWithId(o *model.Organizations) (
 }
 
 func (s *OrganizationService) UpdateOrganizationStatusWithId(status bool, id, updatedBy string) (organization model.Organizations, err error) {
-	err = global.OrganizationMgr.Where("id = ?", id).Select("status").Updates(map[string]interface{}{
+	err = model.OrganizationsMgr(global.DB).Where("id = ?", id).Select("status").Updates(map[string]interface{}{
 		"status":     status,
 		"updated_by": updatedBy,
 	}).Error
 	if err != nil {
 		return
 	}
-	global.OrganizationMgr = model.OrganizationsMgr(utils.Gorm())
-	organization, err = global.OrganizationMgr.GetFromID(id)
+	organization, err = model.OrganizationsMgr(global.DB).GetFromID(id)
 	return
 }
 
 func (s *OrganizationService) AllOrganization() (organizations []*model.Organizations, err error) {
-	organizations, err = global.OrganizationMgr.Gets()
+	organizations, err = model.OrganizationsMgr(global.DB).Gets()
 	return
 }
 
 func (s *OrganizationService) OrganizationWithId(id string) (organization model.Organizations, err error) {
-	organization, err = global.OrganizationMgr.GetFromID(id)
+	organization, err = model.OrganizationsMgr(global.DB).GetFromID(id)
 	return
 }
 
 func (s *OrganizationService) OrganizationsWithApplicationIds(applicationIds ...string) (organizations []*model.Organizations, err error) {
-	results, err := global.OrganizationApplicationMgr.GetBatchFromApplicationID(applicationIds)
+	results, err := model.OrganizationApplicationMgr(global.DB).GetBatchFromApplicationID(applicationIds)
 	if err != nil {
 		return
 	}
@@ -72,7 +70,7 @@ func (s *OrganizationService) OrganizationsWithApplicationIds(applicationIds ...
 	for i := 0; i < l; i++ {
 		ids[i] = results[i].OrganizationID
 	}
-	organizations, err = global.OrganizationMgr.GetBatchFromID(ids)
+	organizations, err = model.OrganizationsMgr(global.DB).GetBatchFromID(ids)
 
 	return
 }
@@ -93,7 +91,7 @@ func (s *OrganizationService) AvailableOrganizations() (organizations []*model.O
 }
 
 func (s *OrganizationService) IsAvailableOrganizations(organizationIds ...string) (organizations []*model.Organizations, err error) {
-	o, err := global.OrganizationMgr.GetBatchFromID(organizationIds)
+	o, err := model.OrganizationsMgr(global.DB).GetBatchFromID(organizationIds)
 	if err != nil {
 		return
 	}

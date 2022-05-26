@@ -14,7 +14,7 @@ func (s *ApplicationService) CreateApplication(a *model.Applications) (applicati
 	a.ClientID = utils.GenerateClientId()
 	a.ClientSecret = utils.GenerateClientSecret()
 
-	result := global.ApplicationMgr.Create(a)
+	result := model.ApplicationsMgr(global.DB).Create(a)
 	if result.Error != nil {
 		err = result.Error
 		return
@@ -32,9 +32,8 @@ func (s *ApplicationService) DeleteApplication(a *model.Applications) (isDeleted
 func (s *ApplicationService) UpdateApplicationWithId(a *model.Applications) (application model.Applications, err error) {
 	id := a.ID
 	a.ID = ""
-	db := global.ApplicationMgr.Where("id = ?", id).Updates(a)
+	db := model.ApplicationsMgr(global.DB).Where("id = ?", id).Updates(a)
 	if db.RowsAffected == 1 {
-		global.ApplicationMgr = model.ApplicationsMgr(utils.Gorm())
 		return s.ApplicationWithId(id)
 	}
 	err = db.Error
@@ -42,43 +41,42 @@ func (s *ApplicationService) UpdateApplicationWithId(a *model.Applications) (app
 }
 
 func (s ApplicationService) UpdateApplicationStatusWithId(status bool, id, updatedBy string) (application model.Applications, err error) {
-	err = global.ApplicationMgr.Where("id = ?", id).Select("status").Updates(map[string]interface{}{
+	err = model.ApplicationsMgr(global.DB).Where("id = ?", id).Select("status").Updates(map[string]interface{}{
 		"status":     status,
 		"updated_by": updatedBy,
 	}).Error
 	if err != nil {
 		return
 	}
-	global.ApplicationMgr = model.ApplicationsMgr(utils.Gorm())
-	application, err = global.ApplicationMgr.GetFromID(id)
+	application, err = model.ApplicationsMgr(global.DB).GetFromID(id)
 	return
 }
 
 func (s *ApplicationService) AllApplication() (applications []*model.Applications, err error) {
-	applications, err = global.ApplicationMgr.Gets()
+	applications, err = model.ApplicationsMgr(global.DB).Gets()
 	return
 }
 
 func (s *ApplicationService) ApplicationWithId(id string) (application model.Applications, err error) {
-	application, err = global.ApplicationMgr.GetFromID(id)
+	application, err = model.ApplicationsMgr(global.DB).GetFromID(id)
 	return
 }
 
 func (s *ApplicationService) ApplicationWithClientId(clientId string) (application model.Applications, err error) {
-	application, err = global.ApplicationMgr.GetFromClientID(clientId)
+	application, err = model.ApplicationsMgr(global.DB).GetFromClientID(clientId)
 	return
 }
 
 func (s *ApplicationService) ApplicationClientSecretWithClientId(clientId string) (clientSecret string, err error) {
 	var application *model.Applications
-	err = global.DB.Table(global.ApplicationMgr.GetTableName()).Select("client_secret").Where("client_id = ?", clientId).Find(&application).Error
+	err = global.DB.Table(model.ApplicationsMgr(global.DB).GetTableName()).Select("client_secret").Where("client_id = ?", clientId).Find(&application).Error
 	clientSecret = application.ClientSecret
 
 	return
 }
 
 func (s *ApplicationService) ApplicationsWithOrganizationIds(organizationIds ...string) (applications []*model.Applications, err error) {
-	results, err := global.OrganizationApplicationMgr.GetBatchFromOrganizationID(organizationIds)
+	results, err := model.OrganizationApplicationMgr(global.DB).GetBatchFromOrganizationID(organizationIds)
 	if err != nil {
 		return
 	}
@@ -88,13 +86,13 @@ func (s *ApplicationService) ApplicationsWithOrganizationIds(organizationIds ...
 	for i := 0; i < l; i++ {
 		ids[i] = results[i].ApplicationID
 	}
-	applications, err = global.ApplicationMgr.GetBatchFromID(ids)
+	applications, err = model.ApplicationsMgr(global.DB).GetBatchFromID(ids)
 
 	return
 }
 
 func (s *ApplicationService) ApplicationsWithUserId(userId string) (applications []*model.Applications, err error) {
-	results, err := global.ApplicationUserMgr.GetFromUserID(userId)
+	results, err := model.ApplicationUserMgr(global.DB).GetFromUserID(userId)
 	if err != nil {
 		return
 	}
@@ -104,7 +102,7 @@ func (s *ApplicationService) ApplicationsWithUserId(userId string) (applications
 	for i := 0; i < l; i++ {
 		ids[i] = results[i].ApplicationID
 	}
-	applications, err = global.ApplicationMgr.GetBatchFromID(ids)
+	applications, err = model.ApplicationsMgr(global.DB).GetBatchFromID(ids)
 
 	return
 }
@@ -125,7 +123,7 @@ func (s *ApplicationService) AvailableApplications() (applications []*model.Appl
 }
 
 func (s *ApplicationService) IsAvailableApplications(applicationIds ...string) (applications []*model.Applications, err error) {
-	apps, err := global.ApplicationMgr.GetBatchFromID(applicationIds)
+	apps, err := model.ApplicationsMgr(global.DB).GetBatchFromID(applicationIds)
 	if err != nil {
 		return
 	}

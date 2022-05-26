@@ -3,7 +3,6 @@ package global
 import (
 	"github.com/go-redis/redis/v8"
 	"github.com/svcodestore/sv-sso-gin/config"
-	"github.com/svcodestore/sv-sso-gin/model"
 	"go.uber.org/zap"
 	"golang.org/x/sync/singleflight"
 	"google.golang.org/grpc"
@@ -19,9 +18,4 @@ var (
 	CONFIG                     config.Config
 	LOGGER                     *zap.Logger
 	ConcurrencyControl         = &singleflight.Group{}
-	UserMgr                    model.UsersMgrType
-	OrganizationMgr            model.OrganizationsMgrType
-	ApplicationMgr             model.ApplicationsMgrType
-	ApplicationUserMgr         model.ApplicationUserMgrType
-	OrganizationApplicationMgr model.OrganizationApplicationMgrType
 )

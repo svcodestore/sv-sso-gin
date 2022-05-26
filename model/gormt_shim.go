@@ -6,12 +6,6 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-type UsersMgrType = *_UsersMgr
-type OrganizationsMgrType = *_OrganizationsMgr
-type ApplicationsMgrType = *_ApplicationsMgr
-type ApplicationUserMgrType = *_ApplicationUserMgr
-type OrganizationApplicationMgrType = *_OrganizationApplicationMgr
-
 type UsersWithoutModInfo struct {
 	ID        string    `gorm:"primaryKey;column:id;type:bigint;not null" json:"id"`
 	UUID      uuid.UUID `gorm:"unique;index:user_uuid_index;column:uuid;type:binary(16);not null" json:"uuid"`

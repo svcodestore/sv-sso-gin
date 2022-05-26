@@ -5,7 +5,6 @@ import (
 
 	"github.com/svcodestore/sv-sso-gin/global"
 	"github.com/svcodestore/sv-sso-gin/initialize"
-	"github.com/svcodestore/sv-sso-gin/model"
 	"github.com/svcodestore/sv-sso-gin/rpc"
 )
 
@@ -18,13 +17,6 @@ func commonInit() {
 	global.LOGGER = initialize.Zap()
 	global.DB = initialize.Gorm()
 	initialize.DBList()
-	if global.DB != nil {
-		global.UserMgr = model.UsersMgr(global.DB)
-		global.OrganizationMgr = model.OrganizationsMgr(global.DB)
-		global.ApplicationMgr = model.ApplicationsMgr(global.DB)
-		global.ApplicationUserMgr = model.ApplicationUserMgr(global.DB)
-		global.OrganizationApplicationMgr = model.OrganizationApplicationMgr(global.DB)
-	}
 
 	initialize.Redis()
 }
