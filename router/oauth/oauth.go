@@ -14,14 +14,15 @@ type OAuthRoutes struct {
 
 func (*OAuthRoutes) Init(r *gin.RouterGroup) {
 	r.POST("register", user.RegisterUser)
-	apiG := r.Group("login")
-	apiG.POST("", api.Login)
-	r.POST("logout", api.Logout)
+	loginG := r.Group("login")
+	loginG.POST("", api.Login)
 
-	oauthG := apiG.Group("oauth2.0")
-	oauthG.POST("/grant-code", oauth.GetGrantCode)
-	oauthG.POST("/token", oauth.GetOauthCode)
+	loginOauthG := loginG.Group("oauth2.0")
+	loginOauthG.POST("/grant-code", oauth.GetGrantCode)
+	loginOauthG.POST("/token", oauth.GetOauthCode)
 
 	r.GET("/application/current-application", application.GetCurrentApplication)
 
+	// 其他后台请求
+	r.GET("/current-application", application.GetCurrentApplicationByClientIdAndClientSecret)
 }

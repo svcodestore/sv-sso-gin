@@ -1,8 +1,6 @@
 package api
 
 import (
-	"strings"
-
 	"github.com/gin-gonic/gin"
 
 	"github.com/svcodestore/sv-sso-gin/model/common/response"
@@ -32,16 +30,13 @@ func Login(c *gin.Context) {
 }
 
 func Logout(c *gin.Context) {
-	t := strings.Split(c.GetHeader("Authorization"), " ")
-	if len(t) > 1 {
-		token := t[1]
-		j := utils.NewJWT()
-		claims, _ := j.ParseToken(token)
-		affected, err := oauthService.DeleteAccessTokenFromRedis(claims.UserId)
-		if err == nil && affected > 0 {
-			response.Ok(c)
-			return
-		}
+	userId := utils.GetUserID(c)
+	affected, err := oauthService.DeleteAccessTokenFromRedis(userId)
+
+	if err == nil && affected > 0 {
+		response.Ok(c)
+		return
 	}
+
 	response.Fail(c)
 }

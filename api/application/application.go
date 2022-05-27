@@ -158,3 +158,17 @@ func GetCurrentApplication(c *gin.Context) {
 		response.OkWithData(application, c)
 	}
 }
+
+func GetCurrentApplicationByClientIdAndClientSecret(c *gin.Context) {
+	id := c.Query("id")
+	clientSecret := c.Query("clientSecret")
+	application, err := applicationService.ApplicationWithId(id)
+	if err == nil && clientSecret == application.ClientSecret {
+		application.ClientSecret = "***"
+		application.CreatedByUser = model.UsersWithoutModInfo{}
+		application.UpdatedByUser = application.CreatedByUser
+		response.OkWithData(application, c)
+	} else {
+		response.FailWithMessage(err.Error(), c)
+	}
+}

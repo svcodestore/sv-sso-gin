@@ -2,6 +2,8 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+
+	"github.com/svcodestore/sv-sso-gin/api"
 	"github.com/svcodestore/sv-sso-gin/api/application"
 	"github.com/svcodestore/sv-sso-gin/api/auth"
 	"github.com/svcodestore/sv-sso-gin/api/organization"
@@ -13,6 +15,8 @@ type Routes struct {
 }
 
 func (*Routes) Init(g *gin.RouterGroup) {
+	g.POST("logout", api.Logout)
+
 	myG := g.Group("my")
 	myG.GET("/applications", privilege.GetCurrentAccessibleApplications)
 
@@ -24,6 +28,7 @@ func (*Routes) Init(g *gin.RouterGroup) {
 	userG.GET("/:id", user.GetUserById)
 	userG.PATCH("/:id", user.UpdateUser)
 	userG.GET("/current-user", user.CurrentUser)
+	userG.GET("/ping", user.IsUserLogin)
 
 	userMenusG := g.Group("user-menus")
 	userMenusG.GET("", auth.GetAuthMenusByApplicationIdAndUserId)
