@@ -193,6 +193,17 @@ insert into applications(id,
         'http://localhost:3000/oauth2.0/authorize?',
         0,
         0
+    ), (
+        1531087548372221952,
+        'SV_RESOURCE',
+        'SV RESOURCE',
+        'https://localhost:3200',
+        '7c23f4aa74bbe21a3834',
+        'fbcf8d0b3194d513b553fd4dcf119f3e96910160',
+        'https://localhost:3200/callback',
+        'http://localhost:3000/oauth2.0/authorize?',
+        0,
+        0
     );
 
 insert into application_user(application_id, user_id, created_by, updated_by)
