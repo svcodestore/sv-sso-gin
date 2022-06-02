@@ -37,15 +37,12 @@ func (jwtService *JwtService) GenerateToken(c request.BaseClaims) (accessToken, 
 	if err != nil {
 		return
 	}
-	_, err = oauthService.SaveAccessTokenToRedis(c.UserId, accessToken)
-	if err != nil {
-		return
-	}
+
 	claims.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
 	refreshToken, err = j.CreateToken(claims)
 	if err != nil {
 		return
 	}
-	_, err = oauthService.SaveRefreshTokenToRedis(c.UserId, refreshToken)
+
 	return
 }

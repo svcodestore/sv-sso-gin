@@ -20,6 +20,7 @@ const (
 	GrantedCodeRedisKey        = "grantedCode"
 	IssuedAccessTokenRedisKey  = "issuedAccessToken"
 	IssuedRefreshTokenRedisKey = "issuedRefreshToken"
+	OnlineUsers                = "onlineUsers"
 )
 
 type OauthService struct {
@@ -165,6 +166,16 @@ func (s *OauthService) DoGenerateOauthCode(clientId, clientSecret, code, redirec
 			Username: user.Name,
 			ClientId: clientId,
 		})
+		if err != nil {
+			return
+		}
+		_, err = oauthService.SaveAccessTokenToRedis(user.ID, accessToken)
+		if err != nil {
+			return
+		}
+		_, err = oauthService.SaveRefreshTokenToRedis(user.ID, refreshToken)
+
+		s.SetUserOnline(user.ID, user.Name, "avatar")
 
 		if err == nil {
 			oauthService.DeleteGrantCodeByClientId(clientId)
@@ -188,7 +199,31 @@ func (s *OauthService) DoOauthLogin(username, password, loginType, clientId stri
 			LoginId:  user.LoginID,
 			ClientId: clientId,
 		})
+		if err != nil {
+			return
+		}
+		_, err = oauthService.SaveAccessTokenToRedis(user.ID, accessToken)
+		if err != nil {
+			return
+		}
+		_, err = oauthService.SaveRefreshTokenToRedis(user.ID, refreshToken)
+
+		s.SetUserOnline(user.ID, user.Name, "avatar")
+
 		return
 	}
+	return
+}
+
+func (s *OauthService) SetUserOnline(userId, userName, userAvatar string) (isOk bool) {
+	ctx := context.Background()
+	k := OnlineUsers
+	err := global.REDIS.HSet(ctx, k, userId, userName+":"+userAvatar).Err()
+
+	if err == nil {
+		isOk = true
+		return
+	}
+
 	return
 }
