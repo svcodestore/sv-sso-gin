@@ -1,0 +1,51 @@
+FROM golang:1.17 AS API
+WORKDIR /sv-sso-gin
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o http_server ./main.go && mkdir run && mv ./http_server ./config.yaml run
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o rpc_server ./rpc.go && mv ./rpc_server run
+
+FROM alpine:latest
+
+COPY --from=API /sv-sso-gin/run ./
+RUN echo "mysql:
+  path: 192.168.123.51
+  port: 4316
+  config: charset=utf8mb4&parseTime=True&loc=Local
+  db-name: sv_sso
+  username: root
+  password: root
+  max-idle-conns: 0
+  max-open-conns: 0
+  log-mode: 
+  log-zap: false
+redis:
+  db: 0
+  addr: 192.168.123.51:7389
+  password: 
+system:
+  id: 0
+  env: public
+  addr: :9898
+  rpc-addr: :51098
+  auth-rpc-addr: 192.168.123.51:51078
+  db-type: mysql
+  oss-type: local
+  use-multipoint: false
+  iplimit-count: 15000
+  iplimit-time: 3600
+zap:
+  level: info
+  format: console
+  prefix: '[github.com/svcodestore/sv-sso-gin]'
+  director: logs
+  showLine: true
+  encode-level: LowercaseColorLevelEncoder
+  stacktrace-key: stacktrace
+  log-in-console: true
+jwt:
+  buffer-time: 86400
+  expires-time: 604800
+  issuer: http://192.168.123.51:9898
+  signing-key: 5f637bd1-578e-4f1e-940d-41b814d4acf0" > ./config.yaml
+
+CMD ["sh", "-c", "./http_server & \n ./rpc_server"]
