@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/svcodestore/sv-sso-gin/service"
 	"log"
 
 	"github.com/svcodestore/sv-sso-gin/global"
@@ -32,6 +33,8 @@ func RunServer() {
 
 	routers := initialize.Routers()
 
+	go service.ServiceGroup.WebsocketClientManagerService.Start()
+
 	address := global.CONFIG.System.Addr
 	s := initServer(address, routers)
 
@@ -48,5 +51,5 @@ func RunRpcServer() {
 	}
 	defer db.Close()
 
-	initialize.InitGrpc(rpc.RegisterServer)
+	global.RpcServer, _ = initialize.InitGrpc(rpc.RegisterServer)
 }

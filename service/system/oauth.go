@@ -4,16 +4,18 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/go-redis/redis/v8"
-	"github.com/svcodestore/sv-sso-gin/global"
-	"github.com/svcodestore/sv-sso-gin/model"
-	"github.com/svcodestore/sv-sso-gin/model/system/request"
-	"github.com/svcodestore/sv-sso-gin/utils"
-	"github.com/thanhpk/randstr"
 	"log"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/go-redis/redis/v8"
+	"github.com/thanhpk/randstr"
+
+	"github.com/svcodestore/sv-sso-gin/global"
+	"github.com/svcodestore/sv-sso-gin/model"
+	"github.com/svcodestore/sv-sso-gin/model/system/request"
+	"github.com/svcodestore/sv-sso-gin/utils"
 )
 
 const (
@@ -175,8 +177,6 @@ func (s *OauthService) DoGenerateOauthCode(clientId, clientSecret, code, redirec
 		}
 		_, err = oauthService.SaveRefreshTokenToRedis(user.ID, refreshToken)
 
-		s.SetUserOnline(user.ID, user.Name, "avatar")
-
 		if err == nil {
 			oauthService.DeleteGrantCodeByClientId(clientId)
 			return
@@ -208,17 +208,49 @@ func (s *OauthService) DoOauthLogin(username, password, loginType, clientId stri
 		}
 		_, err = oauthService.SaveRefreshTokenToRedis(user.ID, refreshToken)
 
-		s.SetUserOnline(user.ID, user.Name, "avatar")
-
 		return
 	}
 	return
 }
 
-func (s *OauthService) SetUserOnline(userId, userName, userAvatar string) (isOk bool) {
+func (s *OauthService) AllOnlineUser() (users []string) {
 	ctx := context.Background()
 	k := OnlineUsers
-	err := global.REDIS.HSet(ctx, k, userId, userName+":"+userAvatar).Err()
+	users ,_ = global.REDIS.HKeys(ctx, k).Result()
+
+	return
+}
+
+func (s *OauthService) IsUserOnline(userId string) (isOnline bool) {
+	ctx := context.Background()
+	k := OnlineUsers
+	isOnline, err := global.REDIS.HExists(ctx, k, userId).Result()
+
+	if err != nil {
+		isOnline = false
+		return
+	}
+
+	return
+}
+
+func (s *OauthService) SetUserOnline(userId, userName string) (isOk bool) {
+	ctx := context.Background()
+	k := OnlineUsers
+	err := global.REDIS.HSet(ctx, k, userId, userName).Err()
+
+	if err == nil {
+		isOk = true
+		return
+	}
+
+	return
+}
+
+func (s *OauthService) UnsetUserOnline(userId string) (isOk bool) {
+	ctx := context.Background()
+	k := OnlineUsers
+	err := global.REDIS.HDel(ctx, k, userId).Err()
 
 	if err == nil {
 		isOk = true

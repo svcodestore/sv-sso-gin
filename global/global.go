@@ -10,12 +10,12 @@ import (
 )
 
 var (
-	DB                         *gorm.DB
-	DBList                     map[string]*gorm.DB
-	REDIS                      *redis.Client
-	RpcServer                  *grpc.Server
-	CONFIGURATOR               config.Configurator
-	CONFIG                     config.Config
-	LOGGER                     *zap.Logger
-	ConcurrencyControl         = &singleflight.Group{}
+	DB                 *gorm.DB
+	DBList             map[string]*gorm.DB
+	REDIS              *redis.Client
+	RpcServer          *grpc.Server
+	CONFIGURATOR       config.Configurator
+	CONFIG             config.Config
+	LOGGER             *zap.Logger
+	ConcurrencyControl = &singleflight.Group{}
 )

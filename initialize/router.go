@@ -11,6 +11,9 @@ func Routers() *gin.Engine {
 	r := gin.Default()
 	r.Use(middleware.Cors())
 
+	wsGroup := r.Group("ws")
+	router.RouterGroup.Websocket.Init(wsGroup)
+
 	apiGroup := r.Group("api")
 
 	publicApiGroup := apiGroup.Group("")
