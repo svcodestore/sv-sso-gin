@@ -1,6 +1,8 @@
 package service
 
-import "github.com/svcodestore/sv-sso-gin/service/system"
+import (
+	"github.com/svcodestore/sv-sso-gin/service/system"
+)
 
 type Group struct {
 	JwtService                     system.JwtService
@@ -16,8 +18,6 @@ type Group struct {
 	PrivilegeApplicationService    system.PrivilegeApplicationService
 	PermissionUserService          system.PermissionUserService
 	AuthService                    system.AuthService
-	WebsocketClientService         system.WebsocketClient
-	WebsocketClientManagerService  system.WebsocketClientManager
 }
 
 var ServiceGroup = new(Group)

@@ -3,11 +3,10 @@ package websocket
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"github.com/svcodestore/sv-sso-gin/service"
 	"github.com/svcodestore/sv-sso-gin/service/system"
+	"github.com/svcodestore/sv-sso-gin/utils"
 	"log"
 	"net/http"
-	"strings"
 )
 
 func UserActivation(c *gin.Context) {
@@ -20,10 +19,18 @@ func UserActivation(c *gin.Context) {
 	}
 	defer conn.Close()
 	userId := c.Param("id")
+	token := c.Query("token")
+	if token == "" {
+		return
+	}
+	j := utils.NewJWT()
+	claims, err := j.ParseToken(token)
+	if err != nil || claims.UserId != userId {
+		return
+	}
 	isUserLogin := oauthService.IsUserLogin(userId)
 	log.Printf("is user[%s] login: %v", userId, isUserLogin)
 	if !isUserLogin {
-		conn.Close()
 		return
 	}
 	isUserOnline := oauthService.IsUserOnline(userId)
@@ -35,14 +42,14 @@ func UserActivation(c *gin.Context) {
 	client := system.NewWebsocketClient(conn)
 	client.UserId = userId
 
-	go client.Read()
-	go client.Write()
-
-	log.Println(service.ServiceGroup.WebsocketClientManagerService.ManagerInfo())
-	service.ServiceGroup.WebsocketClientManagerService.Connect <- client
-	log.Println(service.ServiceGroup.WebsocketClientManagerService.ManagerInfo())
+	system.WsClientMgr.Connect <- client
 	users := oauthService.AllOnlineUser()
-	log.Println(users)
-	service.ServiceGroup.WebsocketClientManagerService.BroadcastMessage <- []byte(strings.Join(users, ","))
-	log.Println(service.ServiceGroup.WebsocketClientManagerService.ManagerInfo())
+	b, _ := json.Marshal(users)
+	rtn := []byte("onlineUsers:")
+	rtn = append(rtn, b...)
+	system.WsClientMgr.BroadcastMessage <- rtn
+
+	 go client.Read()
+	 client.Write()
+
 }

@@ -1,9 +1,10 @@
 package system
 
 import (
-	"log"
 	"sync"
 )
+
+var WsClientMgr *WebsocketClientManager
 
 type WebsocketClientManager struct {
 	Clients          map[string]*WebsocketClient
@@ -67,7 +68,6 @@ func (m *WebsocketClientManager) ManagerInfo() (managerInfo map[string]interface
 }
 
 func (m *WebsocketClientManager) Start() {
-	log.Println("websocket manager start", m.ManagerInfo())
 	for {
 		select {
 		case conn := <-m.Connect:
@@ -76,9 +76,8 @@ func (m *WebsocketClientManager) Start() {
 			m.DisconnectClient(conn.UserId)
 		case message := <-m.BroadcastMessage:
 			users := oauthService.AllOnlineUser()
-			for i := 0; i < len(users); i++ {
-				log.Println("broadcast to", users[i])
-				if client, ok := m.Clients[users[i]]; ok {
+			for id, _ := range users {
+				if client, ok := m.Clients[id]; ok {
 					select {
 					case client.ToBeSent <- message:
 					default:

@@ -1,5 +1,7 @@
 package system
 
+import jsoniter "github.com/json-iterator/go"
+
 var (
 	applicationService             = ApplicationService{}
 	jwtService                     = JwtService{}
@@ -8,4 +10,5 @@ var (
 	organizationApplicationService = OrganizationApplicationService{}
 	oauthService                   = OauthService{}
 	privilegeApplicationService    = PrivilegeApplicationService{}
+	json                           = jsoniter.ConfigCompatibleWithStandardLibrary
 )

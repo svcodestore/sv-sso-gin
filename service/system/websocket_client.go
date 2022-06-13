@@ -14,7 +14,7 @@ type WebsocketClient struct {
 
 func NewWebsocketClient(conn *websocket.Conn) (client *WebsocketClient) {
 	client = &WebsocketClient{
-		Conn: conn,
+		Conn:     conn,
 		ToBeSent: make(chan []byte, 100),
 	}
 
@@ -29,7 +29,6 @@ func (c *WebsocketClient) Read() {
 	}()
 
 	defer func() {
-		log.Println("读取客户端数据 关闭 ToBeSent channel", c)
 		close(c.ToBeSent)
 	}()
 
@@ -40,12 +39,17 @@ func (c *WebsocketClient) Read() {
 			isUnset := oauthService.UnsetUserOnline(c.UserId)
 			if isUnset {
 				log.Printf("user[%s] deactive successful", c.UserId)
+				users := oauthService.AllOnlineUser()
+				b, _ := json.Marshal(users)
+				rtn := []byte("onlineUsers:")
+				rtn = append(rtn, b...)
+				WsClientMgr.BroadcastMessage <- rtn
 			} else {
 				log.Printf("user[%s] deactive fail", c.UserId)
 			}
 			break
 		}
-		log.Printf("recv user[%s] : %s", c.UserId, message)
+		log.Printf("recv user[%s]: %s", c.UserId, message)
 
 		if string(message) == "ping" {
 			c.SendMsg([]byte("pong"))

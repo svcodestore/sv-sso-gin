@@ -1,10 +1,12 @@
 package websocket
 
-import "github.com/svcodestore/sv-sso-gin/service"
+import (
+	jsoniter "github.com/json-iterator/go"
+	"github.com/svcodestore/sv-sso-gin/service"
+)
 
 var (
 	oauthService = service.ServiceGroup.OauthService
-	userService = service.ServiceGroup.UserService
-	websocketClientManagerService = service.ServiceGroup.WebsocketClientManagerService
+	userService  = service.ServiceGroup.UserService
+	json         = jsoniter.ConfigCompatibleWithStandardLibrary
 )
-

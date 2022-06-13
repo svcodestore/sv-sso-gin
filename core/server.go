@@ -1,7 +1,6 @@
 package core
 
 import (
-	"github.com/svcodestore/sv-sso-gin/service"
 	"log"
 
 	"github.com/svcodestore/sv-sso-gin/global"
@@ -33,7 +32,7 @@ func RunServer() {
 
 	routers := initialize.Routers()
 
-	go service.ServiceGroup.WebsocketClientManagerService.Start()
+	go initialize.WebsocketManagerInit()
 
 	address := global.CONFIG.System.Addr
 	s := initServer(address, routers)
