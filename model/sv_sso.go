@@ -183,6 +183,87 @@ var OrganizationsColumns = struct {
 	UpdatedBy: "updated_by",
 }
 
+// UserLogin [...]
+type UserLogin struct {
+	UserID        uint64    `gorm:"primaryKey;column:user_id;type:bigint unsigned;not null" json:"userId"`
+	Users         Users     `gorm:"joinForeignKey:user_id;foreignKey:id" json:"usersList"`
+	ApplicationID uint64    `gorm:"index:user_login_application_id_index;column:application_id;type:bigint unsigned;not null" json:"applicationId"`
+	IPv4          string    `gorm:"column:ipv4;type:varchar(15)" json:"ipv4"`
+	IPv6          string    `gorm:"column:ipv6;type:varchar(46)" json:"ipv6"`
+	Time          time.Time `gorm:"column:time;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"time"`
+	Device        string    `gorm:"column:device;type:varchar(1024);default:WEB" json:"device"`
+}
+
+// TableName get sql table name.获取数据库表名
+func (m *UserLogin) TableName() string {
+	return "user_login"
+}
+
+// UserLoginColumns get sql column name.获取数据库列名
+var UserLoginColumns = struct {
+	UserID        string
+	ApplicationID string
+	IPv4          string
+	IPv6          string
+	Time          string
+	Device        string
+}{
+	UserID:        "user_id",
+	ApplicationID: "application_id",
+	IPv4:          "ipv4",
+	IPv6:          "ipv6",
+	Time:          "time",
+	Device:        "device",
+}
+
+// UserProfile [...]
+type UserProfile struct {
+	UserID     uint64 `gorm:"primaryKey;column:user_id;type:bigint unsigned;not null" json:"userId"`
+	Users      Users  `gorm:"joinForeignKey:user_id;foreignKey:id" json:"usersList"`
+	Avatar     string `gorm:"column:avatar;type:varchar(1024)" json:"avatar"`
+	WechatUId  string `gorm:"column:wechat_uid;type:varchar(255)" json:"wechatUid"`
+	WechatName string `gorm:"column:wechat_name;type:varchar(64)" json:"wechatName"`
+	QqUId      string `gorm:"column:qq_uid;type:varchar(255)" json:"qqUid"`
+	QqName     string `gorm:"column:qq_name;type:varchar(64)" json:"qqName"`
+	SkypeUId   string `gorm:"column:skype_uid;type:varchar(255)" json:"skypeUid"`
+	SkypeName  string `gorm:"column:skype_name;type:varchar(64)" json:"skypeName"`
+	GoogleUId  string `gorm:"column:google_uid;type:varchar(255)" json:"googleUid"`
+	GoogleName string `gorm:"column:google_name;type:varchar(64)" json:"googleName"`
+	Gender     string `gorm:"column:gender;type:varchar(16)" json:"gender"`
+}
+
+// TableName get sql table name.获取数据库表名
+func (m *UserProfile) TableName() string {
+	return "user_profile"
+}
+
+// UserProfileColumns get sql column name.获取数据库列名
+var UserProfileColumns = struct {
+	UserID     string
+	Avatar     string
+	WechatUId  string
+	WechatName string
+	QqUId      string
+	QqName     string
+	SkypeUId   string
+	SkypeName  string
+	GoogleUId  string
+	GoogleName string
+	Gender     string
+}{
+	UserID:     "user_id",
+	Avatar:     "avatar",
+	WechatUId:  "wechat_uid",
+	WechatName: "wechat_name",
+	QqUId:      "qq_uid",
+	QqName:     "qq_name",
+	SkypeUId:   "skype_uid",
+	SkypeName:  "skype_name",
+	GoogleUId:  "google_uid",
+	GoogleName: "google_name",
+	Gender:     "gender",
+}
+
 // Users [...]
 // type Users struct {
 // 	ID        string    `gorm:"primaryKey;column:id;type:bigint unsigned;not null" json:"id"`
