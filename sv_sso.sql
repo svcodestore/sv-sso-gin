@@ -28,6 +28,36 @@ create table users
     primary key (id)
 ) engine = InnoDB;
 
+create table user_login
+(
+    user_id        bigint unsigned not null,
+    application_id bigint unsigned not null,
+    ipv4           varchar(15),
+    ipv6           varchar(46),
+    time           datetime(6)     not null default current_timestamp(6) on update current_timestamp(6),
+    device         varchar(1024)            default 'WEB',
+    primary key (`user_id`),
+    index `user_login_application_id_index` (`application_id`),
+    constraint user_login_chk_device check ( device = 'WEB' or device = 'PC' or device = 'APP' ),
+    constraint user_login_fk_user_id foreign key (user_id) references `users` (id) on update cascade on delete cascade
+) engine = InnoDB;
+
+create table user_profile(
+    user_id        bigint unsigned not null,
+    avatar  varchar(1024),
+    wechat_uid varchar(255),
+    wechat_name varchar(64),
+    qq_uid varchar(255),
+    qq_name varchar(64),
+    skype_uid varchar(255),
+    skype_name varchar(64),
+    google_uid varchar(255),
+    google_name varchar(64),
+    gender varchar(16),
+    primary key (`user_id`),
+    constraint user_profile_fk_user_id foreign key (user_id) references `users` (id) on update cascade on delete cascade
+) engine = InnoDB;
+
 create table organizations
 (
     id         bigint unsigned  not null,
