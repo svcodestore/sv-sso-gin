@@ -39,7 +39,8 @@ create table user_login
     primary key (`user_id`),
     index `user_login_application_id_index` (`application_id`),
     constraint user_login_chk_device check ( device = 'WEB' or device = 'PC' or device = 'APP' ),
-    constraint user_login_fk_user_id foreign key (user_id) references `users` (id) on update cascade on delete cascade
+    constraint user_login_fk_user_id foreign key (user_id) references `users` (id) on update cascade on delete cascade,
+    constraint user_login_fk_application_id foreign key (application_id) references `applications` (id) on update cascade on delete no action
 ) engine = InnoDB;
 
 create table user_profile(
