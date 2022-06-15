@@ -9,15 +9,19 @@ create table users
     login_id   varchar(16)      not null,
     password   varchar(1024),
     name       varchar(32),
+    avatar     varchar(1024),
     alias      varchar(32),
     phone      varchar(16),
     email      varchar(1024),
+    gender     tinyint unsigned                   default 2 comment '0 is female, 1 is male, 2 is unknown',
+    home_path  json,
     lang       char(5) collate utf8mb4_0900_as_cs default 'zh_CN',
     status     tinyint unsigned not null          default 1,
     created_at datetime(6)      not null          default current_timestamp(6),
     created_by bigint unsigned  not null,
     updated_at datetime(6)      not null          default current_timestamp(6) on update current_timestamp(6),
     updated_by bigint unsigned  not null,
+    constraint users_chk_gender check ( gender = 0 or gender = 1 or gender = 2),
     constraint users_chk_status check ( status = 0 or status = 1),
     constraint users_chk_lang check ( lang = 'zh_CN' or lang = 'zh_TW' or lang = 'zh_HK' or lang = 'en_US'),
     constraint users_fk_created_by foreign key (created_by) references `users` (id) on update cascade on delete restrict,
@@ -43,18 +47,17 @@ create table user_login
     constraint user_login_fk_application_id foreign key (application_id) references `applications` (id) on update cascade on delete no action
 ) engine = InnoDB;
 
-create table user_profile(
-    user_id        bigint unsigned not null,
-    avatar  varchar(1024),
-    wechat_uid varchar(255),
+create table user_profile
+(
+    user_id     bigint unsigned not null,
+    wechat_uid  varchar(255),
     wechat_name varchar(64),
-    qq_uid varchar(255),
-    qq_name varchar(64),
-    skype_uid varchar(255),
-    skype_name varchar(64),
-    google_uid varchar(255),
+    qq_uid      varchar(255),
+    qq_name     varchar(64),
+    skype_uid   varchar(255),
+    skype_name  varchar(64),
+    google_uid  varchar(255),
     google_name varchar(64),
-    gender varchar(16),
     primary key (`user_id`),
     constraint user_profile_fk_user_id foreign key (user_id) references `users` (id) on update cascade on delete cascade
 ) engine = InnoDB;
