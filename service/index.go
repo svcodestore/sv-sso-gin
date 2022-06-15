@@ -18,6 +18,7 @@ type Group struct {
 	PrivilegeApplicationService    system.PrivilegeApplicationService
 	PermissionUserService          system.PermissionUserService
 	AuthService                    system.AuthService
+	UserLoginRecordService         system.UserLoginRecordService
 }
 
 var ServiceGroup = new(Group)

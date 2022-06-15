@@ -7,6 +7,7 @@ import (
 	"github.com/svcodestore/sv-sso-gin/utils"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func UserActivation(c *gin.Context) {
@@ -39,6 +40,16 @@ func UserActivation(c *gin.Context) {
 		oauthService.SetUserOnline(userId, user.Name)
 	}
 
+	ip4 := ""
+	ip6 := ""
+	clientIp := c.ClientIP()
+	ips := strings.Split(clientIp, ":")
+	ip4 = ips[len(ips)-1]
+	device := ""
+	clientId := claims.BaseClaims.ClientId
+	application, _ := applicationService.ApplicationWithClientId(clientId)
+	userLoginRecordService.UpsertUserLogin(userId, application.ID, ip4, ip6, device)
+
 	client := system.NewWebsocketClient(conn)
 	client.UserId = userId
 
@@ -49,7 +60,7 @@ func UserActivation(c *gin.Context) {
 	rtn = append(rtn, b...)
 	system.WsClientMgr.BroadcastMessage <- rtn
 
-	 go client.Read()
-	 client.Write()
+	go client.Read()
+	client.Write()
 
 }

@@ -6,7 +6,9 @@ import (
 )
 
 var (
-	oauthService = service.ServiceGroup.OauthService
-	userService  = service.ServiceGroup.UserService
-	json         = jsoniter.ConfigCompatibleWithStandardLibrary
+	oauthService           = service.ServiceGroup.OauthService
+	userService            = service.ServiceGroup.UserService
+	applicationService     = service.ServiceGroup.ApplicationService
+	userLoginRecordService = service.ServiceGroup.UserLoginRecordService
+	json                   = jsoniter.ConfigCompatibleWithStandardLibrary
 )
