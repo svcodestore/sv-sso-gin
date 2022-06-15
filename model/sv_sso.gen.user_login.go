@@ -35,6 +35,11 @@ func (obj *_UserLoginMgr) Get() (result UserLogin, err error) {
 				return
 			}
 		}
+		if err = obj.New().Table("applications").Where("id = ?", result.ApplicationID).Find(&result.Applications).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
+			}
+		}
 	}
 
 	return
@@ -46,6 +51,11 @@ func (obj *_UserLoginMgr) Gets() (results []*UserLogin, err error) {
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
 			if err = obj.New().Table("users").Where("id = ?", results[i].UserID).Find(&results[i].Users).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("applications").Where("id = ?", results[i].ApplicationID).Find(&results[i].Applications).Error; err != nil { //
 				if err != gorm.ErrRecordNotFound { // 非 没找到
 					return
 				}
@@ -103,6 +113,11 @@ func (obj *_UserLoginMgr) GetByOption(opts ...Option) (result UserLogin, err err
 				return
 			}
 		}
+		if err = obj.New().Table("applications").Where("id = ?", result.ApplicationID).Find(&result.Applications).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
+			}
+		}
 	}
 
 	return
@@ -125,6 +140,11 @@ func (obj *_UserLoginMgr) GetByOptions(opts ...Option) (results []*UserLogin, er
 					return
 				}
 			}
+			if err = obj.New().Table("applications").Where("id = ?", results[i].ApplicationID).Find(&results[i].Applications).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
@@ -137,6 +157,11 @@ func (obj *_UserLoginMgr) GetFromUserID(userID string) (result UserLogin, err er
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`user_id` = ?", userID).Find(&result).Error
 	if err == nil && obj.isRelated {
 		if err = obj.New().Table("users").Where("id = ?", result.UserID).Find(&result.Users).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
+			}
+		}
+		if err = obj.New().Table("applications").Where("id = ?", result.ApplicationID).Find(&result.Applications).Error; err != nil { //
 			if err != gorm.ErrRecordNotFound { // 非 没找到
 				return
 			}
@@ -156,6 +181,11 @@ func (obj *_UserLoginMgr) GetBatchFromUserID(userIDs []string) (results []*UserL
 					return
 				}
 			}
+			if err = obj.New().Table("applications").Where("id = ?", results[i].ApplicationID).Find(&results[i].Applications).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
@@ -167,6 +197,11 @@ func (obj *_UserLoginMgr) GetFromApplicationID(applicationID string) (results []
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
 			if err = obj.New().Table("users").Where("id = ?", results[i].UserID).Find(&results[i].Users).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("applications").Where("id = ?", results[i].ApplicationID).Find(&results[i].Applications).Error; err != nil { //
 				if err != gorm.ErrRecordNotFound { // 非 没找到
 					return
 				}
@@ -186,6 +221,11 @@ func (obj *_UserLoginMgr) GetBatchFromApplicationID(applicationIDs []string) (re
 					return
 				}
 			}
+			if err = obj.New().Table("applications").Where("id = ?", results[i].ApplicationID).Find(&results[i].Applications).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
@@ -197,6 +237,11 @@ func (obj *_UserLoginMgr) GetFromIPv4(ipv4 string) (results []*UserLogin, err er
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
 			if err = obj.New().Table("users").Where("id = ?", results[i].UserID).Find(&results[i].Users).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("applications").Where("id = ?", results[i].ApplicationID).Find(&results[i].Applications).Error; err != nil { //
 				if err != gorm.ErrRecordNotFound { // 非 没找到
 					return
 				}
@@ -216,6 +261,11 @@ func (obj *_UserLoginMgr) GetBatchFromIPv4(ipv4s []string) (results []*UserLogin
 					return
 				}
 			}
+			if err = obj.New().Table("applications").Where("id = ?", results[i].ApplicationID).Find(&results[i].Applications).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
@@ -227,6 +277,11 @@ func (obj *_UserLoginMgr) GetFromIPv6(ipv6 string) (results []*UserLogin, err er
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
 			if err = obj.New().Table("users").Where("id = ?", results[i].UserID).Find(&results[i].Users).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("applications").Where("id = ?", results[i].ApplicationID).Find(&results[i].Applications).Error; err != nil { //
 				if err != gorm.ErrRecordNotFound { // 非 没找到
 					return
 				}
@@ -246,6 +301,11 @@ func (obj *_UserLoginMgr) GetBatchFromIPv6(ipv6s []string) (results []*UserLogin
 					return
 				}
 			}
+			if err = obj.New().Table("applications").Where("id = ?", results[i].ApplicationID).Find(&results[i].Applications).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
@@ -257,6 +317,11 @@ func (obj *_UserLoginMgr) GetFromTime(time time.Time) (results []*UserLogin, err
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
 			if err = obj.New().Table("users").Where("id = ?", results[i].UserID).Find(&results[i].Users).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("applications").Where("id = ?", results[i].ApplicationID).Find(&results[i].Applications).Error; err != nil { //
 				if err != gorm.ErrRecordNotFound { // 非 没找到
 					return
 				}
@@ -276,6 +341,11 @@ func (obj *_UserLoginMgr) GetBatchFromTime(times []time.Time) (results []*UserLo
 					return
 				}
 			}
+			if err = obj.New().Table("applications").Where("id = ?", results[i].ApplicationID).Find(&results[i].Applications).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
@@ -291,6 +361,11 @@ func (obj *_UserLoginMgr) GetFromDevice(device string) (results []*UserLogin, er
 					return
 				}
 			}
+			if err = obj.New().Table("applications").Where("id = ?", results[i].ApplicationID).Find(&results[i].Applications).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
 		}
 	}
 	return
@@ -302,6 +377,11 @@ func (obj *_UserLoginMgr) GetBatchFromDevice(devices []string) (results []*UserL
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
 			if err = obj.New().Table("users").Where("id = ?", results[i].UserID).Find(&results[i].Users).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("applications").Where("id = ?", results[i].ApplicationID).Find(&results[i].Applications).Error; err != nil { //
 				if err != gorm.ErrRecordNotFound { // 非 没找到
 					return
 				}
@@ -322,6 +402,11 @@ func (obj *_UserLoginMgr) FetchByPrimaryKey(userID string) (result UserLogin, er
 				return
 			}
 		}
+		if err = obj.New().Table("applications").Where("id = ?", result.ApplicationID).Find(&result.Applications).Error; err != nil { //
+			if err != gorm.ErrRecordNotFound { // 非 没找到
+				return
+			}
+		}
 	}
 
 	return
@@ -333,6 +418,11 @@ func (obj *_UserLoginMgr) FetchIndexByUserLoginApplicationIDIndex(applicationID 
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
 			if err = obj.New().Table("users").Where("id = ?", results[i].UserID).Find(&results[i].Users).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("applications").Where("id = ?", results[i].ApplicationID).Find(&results[i].Applications).Error; err != nil { //
 				if err != gorm.ErrRecordNotFound { // 非 没找到
 					return
 				}

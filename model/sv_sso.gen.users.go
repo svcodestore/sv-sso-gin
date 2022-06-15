@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -92,6 +93,11 @@ func (obj *_UsersMgr) WithName(name string) Option {
 	return optionFunc(func(o *options) { o.query["name"] = name })
 }
 
+// WithAvatar avatar获取
+func (obj *_UsersMgr) WithAvatar(avatar string) Option {
+	return optionFunc(func(o *options) { o.query["avatar"] = avatar })
+}
+
 // WithAlias alias获取
 func (obj *_UsersMgr) WithAlias(alias string) Option {
 	return optionFunc(func(o *options) { o.query["alias"] = alias })
@@ -107,9 +113,19 @@ func (obj *_UsersMgr) WithEmail(email string) Option {
 	return optionFunc(func(o *options) { o.query["email"] = email })
 }
 
+// WithGender gender获取 0 is female, 1 is male, 2 in unknown
+func (obj *_UsersMgr) WithGender(gender uint8) Option {
+	return optionFunc(func(o *options) { o.query["gender"] = gender })
+}
+
 // WithLang lang获取
 func (obj *_UsersMgr) WithLang(lang string) Option {
 	return optionFunc(func(o *options) { o.query["lang"] = lang })
+}
+
+// WithHomePath home_path获取
+func (obj *_UsersMgr) WithHomePath(homePath datatypes.JSON) Option {
+	return optionFunc(func(o *options) { o.query["home_path"] = homePath })
 }
 
 // WithStatus status获取
@@ -390,6 +406,46 @@ func (obj *_UsersMgr) GetBatchFromName(names []string) (results []*Users, err er
 	return
 }
 
+// GetFromAvatar 通过avatar获取内容
+func (obj *_UsersMgr) GetFromAvatar(avatar string) (results []*Users, err error) {
+	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`avatar` = ?", avatar).Find(&results).Error
+	if err == nil && obj.isRelated {
+		for i := 0; i < len(results); i++ {
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+		}
+	}
+	return
+}
+
+// GetBatchFromAvatar 批量查找
+func (obj *_UsersMgr) GetBatchFromAvatar(avatars []string) (results []*Users, err error) {
+	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`avatar` IN (?)", avatars).Find(&results).Error
+	if err == nil && obj.isRelated {
+		for i := 0; i < len(results); i++ {
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+		}
+	}
+	return
+}
+
 // GetFromAlias 通过alias获取内容
 func (obj *_UsersMgr) GetFromAlias(alias string) (results []*Users, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`alias` = ?", alias).Find(&results).Error
@@ -510,6 +566,46 @@ func (obj *_UsersMgr) GetBatchFromEmail(emails []string) (results []*Users, err 
 	return
 }
 
+// GetFromGender 通过gender获取内容 0 is female, 1 is male, 2 in unknown
+func (obj *_UsersMgr) GetFromGender(gender uint8) (results []*Users, err error) {
+	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`gender` = ?", gender).Find(&results).Error
+	if err == nil && obj.isRelated {
+		for i := 0; i < len(results); i++ {
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+		}
+	}
+	return
+}
+
+// GetBatchFromGender 批量查找 0 is female, 1 is male, 2 in unknown
+func (obj *_UsersMgr) GetBatchFromGender(genders []uint8) (results []*Users, err error) {
+	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`gender` IN (?)", genders).Find(&results).Error
+	if err == nil && obj.isRelated {
+		for i := 0; i < len(results); i++ {
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+		}
+	}
+	return
+}
+
 // GetFromLang 通过lang获取内容
 func (obj *_UsersMgr) GetFromLang(lang string) (results []*Users, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`lang` = ?", lang).Find(&results).Error
@@ -533,6 +629,46 @@ func (obj *_UsersMgr) GetFromLang(lang string) (results []*Users, err error) {
 // GetBatchFromLang 批量查找
 func (obj *_UsersMgr) GetBatchFromLang(langs []string) (results []*Users, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`lang` IN (?)", langs).Find(&results).Error
+	if err == nil && obj.isRelated {
+		for i := 0; i < len(results); i++ {
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+		}
+	}
+	return
+}
+
+// GetFromHomePath 通过home_path获取内容
+func (obj *_UsersMgr) GetFromHomePath(homePath datatypes.JSON) (results []*Users, err error) {
+	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`home_path` = ?", homePath).Find(&results).Error
+	if err == nil && obj.isRelated {
+		for i := 0; i < len(results); i++ {
+			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+			if err = obj.New().Table("users").Where("id = ?", results[i].UpdatedBy).Find(&results[i].UpdatedByUser).Error; err != nil { //
+				if err != gorm.ErrRecordNotFound { // 非 没找到
+					return
+				}
+			}
+		}
+	}
+	return
+}
+
+// GetBatchFromHomePath 批量查找
+func (obj *_UsersMgr) GetBatchFromHomePath(homePaths []datatypes.JSON) (results []*Users, err error) {
+	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`home_path` IN (?)", homePaths).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
 			if err = obj.New().Table("users").Where("id = ?", results[i].CreatedBy).Find(&results[i].CreatedByUser).Error; err != nil { //

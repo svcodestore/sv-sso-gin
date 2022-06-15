@@ -61,11 +61,6 @@ func (obj *_UserProfileMgr) WithUserID(userID string) Option {
 	return optionFunc(func(o *options) { o.query["user_id"] = userID })
 }
 
-// WithAvatar avatar获取
-func (obj *_UserProfileMgr) WithAvatar(avatar string) Option {
-	return optionFunc(func(o *options) { o.query["avatar"] = avatar })
-}
-
 // WithWechatUId wechat_uid获取
 func (obj *_UserProfileMgr) WithWechatUId(wechatUId string) Option {
 	return optionFunc(func(o *options) { o.query["wechat_uid"] = wechatUId })
@@ -104,11 +99,6 @@ func (obj *_UserProfileMgr) WithGoogleUId(googleUId string) Option {
 // WithGoogleName google_name获取
 func (obj *_UserProfileMgr) WithGoogleName(googleName string) Option {
 	return optionFunc(func(o *options) { o.query["google_name"] = googleName })
-}
-
-// WithGender gender获取
-func (obj *_UserProfileMgr) WithGender(gender string) Option {
-	return optionFunc(func(o *options) { o.query["gender"] = gender })
 }
 
 // GetByOption 功能选项模式获取
@@ -173,36 +163,6 @@ func (obj *_UserProfileMgr) GetFromUserID(userID string) (result UserProfile, er
 // GetBatchFromUserID 批量查找
 func (obj *_UserProfileMgr) GetBatchFromUserID(userIDs []string) (results []*UserProfile, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`user_id` IN (?)", userIDs).Find(&results).Error
-	if err == nil && obj.isRelated {
-		for i := 0; i < len(results); i++ {
-			if err = obj.New().Table("users").Where("id = ?", results[i].UserID).Find(&results[i].Users).Error; err != nil { //
-				if err != gorm.ErrRecordNotFound { // 非 没找到
-					return
-				}
-			}
-		}
-	}
-	return
-}
-
-// GetFromAvatar 通过avatar获取内容
-func (obj *_UserProfileMgr) GetFromAvatar(avatar string) (results []*UserProfile, err error) {
-	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`avatar` = ?", avatar).Find(&results).Error
-	if err == nil && obj.isRelated {
-		for i := 0; i < len(results); i++ {
-			if err = obj.New().Table("users").Where("id = ?", results[i].UserID).Find(&results[i].Users).Error; err != nil { //
-				if err != gorm.ErrRecordNotFound { // 非 没找到
-					return
-				}
-			}
-		}
-	}
-	return
-}
-
-// GetBatchFromAvatar 批量查找
-func (obj *_UserProfileMgr) GetBatchFromAvatar(avatars []string) (results []*UserProfile, err error) {
-	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`avatar` IN (?)", avatars).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
 			if err = obj.New().Table("users").Where("id = ?", results[i].UserID).Find(&results[i].Users).Error; err != nil { //
@@ -443,36 +403,6 @@ func (obj *_UserProfileMgr) GetFromGoogleName(googleName string) (results []*Use
 // GetBatchFromGoogleName 批量查找
 func (obj *_UserProfileMgr) GetBatchFromGoogleName(googleNames []string) (results []*UserProfile, err error) {
 	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`google_name` IN (?)", googleNames).Find(&results).Error
-	if err == nil && obj.isRelated {
-		for i := 0; i < len(results); i++ {
-			if err = obj.New().Table("users").Where("id = ?", results[i].UserID).Find(&results[i].Users).Error; err != nil { //
-				if err != gorm.ErrRecordNotFound { // 非 没找到
-					return
-				}
-			}
-		}
-	}
-	return
-}
-
-// GetFromGender 通过gender获取内容
-func (obj *_UserProfileMgr) GetFromGender(gender string) (results []*UserProfile, err error) {
-	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`gender` = ?", gender).Find(&results).Error
-	if err == nil && obj.isRelated {
-		for i := 0; i < len(results); i++ {
-			if err = obj.New().Table("users").Where("id = ?", results[i].UserID).Find(&results[i].Users).Error; err != nil { //
-				if err != gorm.ErrRecordNotFound { // 非 没找到
-					return
-				}
-			}
-		}
-	}
-	return
-}
-
-// GetBatchFromGender 批量查找
-func (obj *_UserProfileMgr) GetBatchFromGender(genders []string) (results []*UserProfile, err error) {
-	err = obj.DB.WithContext(obj.ctx).Table(obj.GetTableName()).Where("`gender` IN (?)", genders).Find(&results).Error
 	if err == nil && obj.isRelated {
 		for i := 0; i < len(results); i++ {
 			if err = obj.New().Table("users").Where("id = ?", results[i].UserID).Find(&results[i].Users).Error; err != nil { //

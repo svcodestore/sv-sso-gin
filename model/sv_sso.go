@@ -219,18 +219,16 @@ var UserLoginColumns = struct {
 
 // UserProfile [...]
 type UserProfile struct {
-	UserID     string `gorm:"primaryKey;column:user_id;type:bigint unsigned;not null" json:"userId"`
-	Users      Users  `gorm:"joinForeignKey:user_id;foreignKey:UserID" json:"usersList"`
-	Avatar     string `gorm:"column:avatar;type:varchar(1024)" json:"avatar"`
-	WechatUId  string `gorm:"column:wechat_uid;type:varchar(255)" json:"wechatUid"`
-	WechatName string `gorm:"column:wechat_name;type:varchar(64)" json:"wechatName"`
-	QqUId      string `gorm:"column:qq_uid;type:varchar(255)" json:"qqUid"`
-	QqName     string `gorm:"column:qq_name;type:varchar(64)" json:"qqName"`
-	SkypeUId   string `gorm:"column:skype_uid;type:varchar(255)" json:"skypeUid"`
-	SkypeName  string `gorm:"column:skype_name;type:varchar(64)" json:"skypeName"`
-	GoogleUId  string `gorm:"column:google_uid;type:varchar(255)" json:"googleUid"`
-	GoogleName string `gorm:"column:google_name;type:varchar(64)" json:"googleName"`
-	Gender     string `gorm:"column:gender;type:varchar(16)" json:"gender"`
+	UserID     string              `gorm:"primaryKey;column:user_id;type:bigint unsigned;not null" json:"userId"`
+	Users      UsersWithoutModInfo `gorm:"joinForeignKey:user_id;foreignKey:UserID" json:"usersList"`
+	WechatUId  string              `gorm:"column:wechat_uid;type:varchar(255)" json:"wechatUid"`
+	WechatName string              `gorm:"column:wechat_name;type:varchar(64)" json:"wechatName"`
+	QqUId      string              `gorm:"column:qq_uid;type:varchar(255)" json:"qqUid"`
+	QqName     string              `gorm:"column:qq_name;type:varchar(64)" json:"qqName"`
+	SkypeUId   string              `gorm:"column:skype_uid;type:varchar(255)" json:"skypeUid"`
+	SkypeName  string              `gorm:"column:skype_name;type:varchar(64)" json:"skypeName"`
+	GoogleUId  string              `gorm:"column:google_uid;type:varchar(255)" json:"googleUid"`
+	GoogleName string              `gorm:"column:google_name;type:varchar(64)" json:"googleName"`
 }
 
 // TableName get sql table name.获取数据库表名
@@ -241,7 +239,6 @@ func (m *UserProfile) TableName() string {
 // UserProfileColumns get sql column name.获取数据库列名
 var UserProfileColumns = struct {
 	UserID     string
-	Avatar     string
 	WechatUId  string
 	WechatName string
 	QqUId      string
@@ -250,10 +247,8 @@ var UserProfileColumns = struct {
 	SkypeName  string
 	GoogleUId  string
 	GoogleName string
-	Gender     string
 }{
 	UserID:     "user_id",
-	Avatar:     "avatar",
 	WechatUId:  "wechat_uid",
 	WechatName: "wechat_name",
 	QqUId:      "qq_uid",
@@ -262,7 +257,6 @@ var UserProfileColumns = struct {
 	SkypeName:  "skype_name",
 	GoogleUId:  "google_uid",
 	GoogleName: "google_name",
-	Gender:     "gender",
 }
 
 // Users [...]
@@ -296,10 +290,13 @@ var UsersColumns = struct {
 	LoginID   string
 	Password  string
 	Name      string
+	Avatar    string
 	Alias     string
 	Phone     string
 	Email     string
+	Gender    string
 	Lang      string
+	HomePath  string
 	Status    string
 	CreatedAt string
 	CreatedBy string
@@ -311,10 +308,13 @@ var UsersColumns = struct {
 	LoginID:   "login_id",
 	Password:  "password",
 	Name:      "name",
+	Avatar:    "avatar",
 	Alias:     "alias",
 	Phone:     "phone",
 	Email:     "email",
+	Gender:    "gender",
 	Lang:      "lang",
+	HomePath:  "home_path",
 	Status:    "status",
 	CreatedAt: "created_at",
 	CreatedBy: "created_by",
