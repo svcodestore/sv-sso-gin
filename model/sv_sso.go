@@ -185,13 +185,14 @@ var OrganizationsColumns = struct {
 
 // UserLogin [...]
 type UserLogin struct {
-	UserID        uint64    `gorm:"primaryKey;column:user_id;type:bigint unsigned;not null" json:"userId"`
-	Users         Users     `gorm:"joinForeignKey:user_id;foreignKey:id" json:"usersList"`
-	ApplicationID uint64    `gorm:"index:user_login_application_id_index;column:application_id;type:bigint unsigned;not null" json:"applicationId"`
-	IPv4          string    `gorm:"column:ipv4;type:varchar(15)" json:"ipv4"`
-	IPv6          string    `gorm:"column:ipv6;type:varchar(46)" json:"ipv6"`
-	Time          time.Time `gorm:"column:time;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"time"`
-	Device        string    `gorm:"column:device;type:varchar(1024);default:WEB" json:"device"`
+	UserID        string              `gorm:"primaryKey;column:user_id;type:bigint unsigned;not null" json:"userId"`
+	Users         UsersWithoutModInfo `gorm:"joinForeignKey:user_id;foreignKey:UserID" json:"usersList"`
+	ApplicationID string              `gorm:"index:user_login_application_id_index;column:application_id;type:bigint unsigned;not null" json:"applicationId"`
+	Applications  Applications        `gorm:"joinForeignKey:application_id;foreignKey:ApplicationID" json:"applicationsList"`
+	IPv4          string              `gorm:"column:ipv4;type:varchar(15)" json:"ipv4"`
+	IPv6          string              `gorm:"column:ipv6;type:varchar(46)" json:"ipv6"`
+	Time          time.Time           `gorm:"column:time;type:datetime(6);not null;default:CURRENT_TIMESTAMP(6)" json:"time"`
+	Device        string              `gorm:"column:device;type:varchar(1024);default:WEB" json:"device"`
 }
 
 // TableName get sql table name.获取数据库表名
@@ -218,8 +219,8 @@ var UserLoginColumns = struct {
 
 // UserProfile [...]
 type UserProfile struct {
-	UserID     uint64 `gorm:"primaryKey;column:user_id;type:bigint unsigned;not null" json:"userId"`
-	Users      Users  `gorm:"joinForeignKey:user_id;foreignKey:id" json:"usersList"`
+	UserID     string `gorm:"primaryKey;column:user_id;type:bigint unsigned;not null" json:"userId"`
+	Users      Users  `gorm:"joinForeignKey:user_id;foreignKey:UserID" json:"usersList"`
 	Avatar     string `gorm:"column:avatar;type:varchar(1024)" json:"avatar"`
 	WechatUId  string `gorm:"column:wechat_uid;type:varchar(255)" json:"wechatUid"`
 	WechatName string `gorm:"column:wechat_name;type:varchar(64)" json:"wechatName"`
