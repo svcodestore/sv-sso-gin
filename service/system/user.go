@@ -118,27 +118,6 @@ func (s *UserService) UserWithId(id string) (user model.Users, err error) {
 	return
 }
 
-func (s *UserService) UserWithIdAndApplicationId(id, applicationId string) (user model.Users, err error) {
-	users, err := model.ApplicationUserMgr(global.DB).GetFromApplicationID(applicationId)
-	if err != nil {
-		return
-	}
-	userCount := len(users)
-	if userCount == 0 {
-		err = errors.New("not registered")
-		return
-	}
-	for i := 0; i < userCount; i++ {
-		if users[i].UserID == id {
-			user, err = userService.UserWithId(id)
-		} else {
-			err = errors.New("not registered")
-			return
-		}
-	}
-	return
-}
-
 func (s *UserService) UsersWithApplicationIds(applicationIds ...string) (users []*model.Users, err error) {
 	maps, err := model.ApplicationUserMgr(global.DB).GetBatchFromApplicationID(applicationIds)
 	if err != nil {

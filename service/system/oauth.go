@@ -216,7 +216,7 @@ func (s *OauthService) DoOauthLogin(username, password, loginType, clientId stri
 func (s *OauthService) AllOnlineUser() (users map[string]string) {
 	ctx := context.Background()
 	k := OnlineUsers
-	users ,_ = global.REDIS.HGetAll(ctx, k).Result()
+	users, _ = global.REDIS.HGetAll(ctx, k).Result()
 
 	return
 }

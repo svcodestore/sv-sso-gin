@@ -81,10 +81,7 @@ func GetAllApplicationUser(c *gin.Context) {
 func GetApplicationUserById(c *gin.Context) {
 	applicationId := c.Query("applicationId")
 	userId := c.Query("userId")
-	applicationUser, err := applicationUserService.ApplicationUserWithId(&model.ApplicationUser{
-		ApplicationID: applicationId,
-		UserID:        userId,
-	})
+	applicationUser, err := applicationUserService.ApplicationUserWithId(applicationId, userId)
 
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)

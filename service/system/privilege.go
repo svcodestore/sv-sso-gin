@@ -1,6 +1,8 @@
 package system
 
-import "errors"
+import (
+	"errors"
+)
 
 type PrivilegeService struct {
 }
@@ -20,18 +22,22 @@ func (s *PrivilegeService) CanAccessSystem(userId, clientId string) (can bool, e
 		err = errors.New("application nonexistent")
 		return
 	}
-
 	// 此用户是否是全局用户
-	isGlobal, er := s.IsGlobalUser(userId)
+	isGlobal, _ := s.IsGlobalUser(userId)
 	if isGlobal {
 		can = true
 		return
 	}
-	_, e = userService.UserWithIdAndApplicationId(userId, application.ID)
-	// 当前应用没有此用户并且不是全局用户
-	if e != nil && er != nil {
-		err = e
-		return
+	// 用户拥有的应用
+	applications, _ := applicationService.ApplicationsWithUserId(userId)
+	isHaveApplication := false
+	for _, m := range applications {
+		if m.ID == application.ID {
+			isHaveApplication = true
+		}
+	}
+	if !isHaveApplication {
+		err = errors.New("unregister")
 	}
 	// 当前应用是否已注册
 	organizations, e := organizationService.OrganizationsWithApplicationIds(application.ID)

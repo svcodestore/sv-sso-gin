@@ -15,7 +15,7 @@ func (s *ApplicationUserService) CreateApplicationUser(o *model.ApplicationUser)
 		return
 	}
 
-	applicationUser, err = s.ApplicationUserWithId(o)
+	applicationUser, err = s.ApplicationUserWithId(o.ApplicationID, o.UserID)
 	return
 }
 
@@ -36,8 +36,8 @@ func (s *ApplicationUserService) AllApplicationUser() (applicationUsers []*model
 	return
 }
 
-func (s *ApplicationUserService) ApplicationUserWithId(o *model.ApplicationUser) (applicationUser model.ApplicationUser, err error) {
-	applicationUser, err = model.ApplicationUserMgr(global.DB).FetchByPrimaryKey(o.ApplicationID, o.UserID)
+func (s *ApplicationUserService) ApplicationUserWithId(applicationId, userId string) (applicationUser model.ApplicationUser, err error) {
+	applicationUser, err = model.ApplicationUserMgr(global.DB).FetchByPrimaryKey(applicationId, userId)
 	return
 }
 
