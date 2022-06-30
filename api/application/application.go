@@ -167,7 +167,9 @@ func GetCurrentApplication(c *gin.Context) {
 		if application.RedirectURIs != "" {
 			redirectUris := strings.Split(application.RedirectURIs, "|")
 			if len(redirectUris) > 1 {
-				if !isIntranet {
+				if isIntranet {
+					application.RedirectURIs = redirectUris[0]
+				} else {
 					application.RedirectURIs = redirectUris[1]
 				}
 			}
@@ -175,7 +177,9 @@ func GetCurrentApplication(c *gin.Context) {
 		if application.LoginURIs != "" {
 			loginUris := strings.Split(application.LoginURIs, "|")
 			if len(loginUris) > 1 {
-				if !isIntranet {
+				if isIntranet {
+					application.LoginURIs = loginUris[0]
+				} else {
 					application.LoginURIs = loginUris[1]
 				}
 			}
@@ -203,7 +207,9 @@ func GetCurrentApplicationByClientIdAndClientSecret(c *gin.Context) {
 		if application.RedirectURIs != "" {
 			redirectUris := strings.Split(application.RedirectURIs, "|")
 			if len(redirectUris) > 1 {
-				if !isIntranet {
+				if isIntranet {
+					application.RedirectURIs = redirectUris[0]
+				} else {
 					application.RedirectURIs = redirectUris[1]
 				}
 			}
@@ -211,7 +217,9 @@ func GetCurrentApplicationByClientIdAndClientSecret(c *gin.Context) {
 		if application.LoginURIs != "" {
 			loginUris := strings.Split(application.LoginURIs, "|")
 			if len(loginUris) > 1 {
-				if !isIntranet {
+				if isIntranet {
+					application.LoginURIs = loginUris[0]
+				} else {
 					application.LoginURIs = loginUris[1]
 				}
 			}
