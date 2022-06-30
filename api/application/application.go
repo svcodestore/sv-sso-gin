@@ -160,6 +160,10 @@ func GetCurrentApplication(c *gin.Context) {
 
 		isIntranet := true
 		for _, s := range strings.Split(c.Request.Host, ".") {
+			ss := strings.Split(s, ":")
+			if len(ss) > 1 {
+				s = ss[0]
+			}
 			_, e := strconv.Atoi(s)
 			isIntranet = isIntranet && e == nil
 		}
