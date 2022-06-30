@@ -2,6 +2,8 @@ package application
 
 import (
 	"github.com/gin-gonic/gin"
+	"strconv"
+	"strings"
 
 	"github.com/svcodestore/sv-sso-gin/global"
 	"github.com/svcodestore/sv-sso-gin/model"
@@ -155,6 +157,30 @@ func GetCurrentApplication(c *gin.Context) {
 		application.ClientSecret = "***"
 		application.CreatedByUser = model.UsersWithoutModInfo{}
 		application.UpdatedByUser = application.CreatedByUser
+
+		isIntranet := true
+		for _, s := range strings.Split(c.Request.Host, ".") {
+			_, e := strconv.Atoi(s)
+			isIntranet = isIntranet && e == nil
+		}
+
+		if application.RedirectURIs != "" {
+			redirectUris := strings.Split(application.RedirectURIs, "|")
+			if len(redirectUris) > 1 {
+				if !isIntranet {
+					application.RedirectURIs = redirectUris[1]
+				}
+			}
+		}
+		if application.LoginURIs != "" {
+			loginUris := strings.Split(application.LoginURIs, "|")
+			if len(loginUris) > 1 {
+				if !isIntranet {
+					application.LoginURIs = loginUris[1]
+				}
+			}
+		}
+
 		response.OkWithData(application, c)
 	}
 }
@@ -167,6 +193,30 @@ func GetCurrentApplicationByClientIdAndClientSecret(c *gin.Context) {
 		application.ClientSecret = "***"
 		application.CreatedByUser = model.UsersWithoutModInfo{}
 		application.UpdatedByUser = application.CreatedByUser
+
+		isIntranet := true
+		for _, s := range strings.Split(c.Request.Host, ".") {
+			_, e := strconv.Atoi(s)
+			isIntranet = isIntranet && e == nil
+		}
+
+		if application.RedirectURIs != "" {
+			redirectUris := strings.Split(application.RedirectURIs, "|")
+			if len(redirectUris) > 1 {
+				if !isIntranet {
+					application.RedirectURIs = redirectUris[1]
+				}
+			}
+		}
+		if application.LoginURIs != "" {
+			loginUris := strings.Split(application.LoginURIs, "|")
+			if len(loginUris) > 1 {
+				if !isIntranet {
+					application.LoginURIs = loginUris[1]
+				}
+			}
+		}
+
 		response.OkWithData(application, c)
 	} else {
 		response.FailWithMessage(err.Error(), c)

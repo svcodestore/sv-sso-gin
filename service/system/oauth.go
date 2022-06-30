@@ -135,7 +135,17 @@ func (s *OauthService) DoGenerateOauthCode(clientId, clientSecret, code, redirec
 	if err != nil {
 		return
 	}
-	if redirectUri != application.RedirectURIs {
+
+	redirectUris := strings.Split(application.RedirectURIs, "|")
+	flag := false
+	for _, uris := range redirectUris {
+		if redirectUri == uris {
+			flag = true
+			break
+		}
+	}
+
+	if !flag {
 		err = errors.New("redirect uri " + redirectUri + " error")
 		return
 	}
