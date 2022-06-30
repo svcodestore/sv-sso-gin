@@ -202,37 +202,6 @@ func GetCurrentApplicationByClientIdAndClientSecret(c *gin.Context) {
 		application.CreatedByUser = model.UsersWithoutModInfo{}
 		application.UpdatedByUser = application.CreatedByUser
 
-		isIntranet := true
-		for _, s := range strings.Split(c.Request.Host, ".") {
-			ss := strings.Split(s, ":")
-			if len(ss) > 1 {
-				s = ss[0]
-			}
-			_, e := strconv.Atoi(s)
-			isIntranet = isIntranet && e == nil
-		}
-
-		if application.RedirectURIs != "" {
-			redirectUris := strings.Split(application.RedirectURIs, "|")
-			if len(redirectUris) > 1 {
-				if isIntranet {
-					application.RedirectURIs = redirectUris[0]
-				} else {
-					application.RedirectURIs = redirectUris[1]
-				}
-			}
-		}
-		if application.LoginURIs != "" {
-			loginUris := strings.Split(application.LoginURIs, "|")
-			if len(loginUris) > 1 {
-				if isIntranet {
-					application.LoginURIs = loginUris[0]
-				} else {
-					application.LoginURIs = loginUris[1]
-				}
-			}
-		}
-
 		response.OkWithData(application, c)
 	} else {
 		response.FailWithMessage(err.Error(), c)
