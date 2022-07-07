@@ -17,7 +17,7 @@ type CryptoService struct {
 }
 
 func (c *CryptoService) init() {
-	rag := 2
+	rag := 10
 
 	ts := time.Now().Unix()
 	h := fmt.Sprintf("%x", ts/int64(rag))
