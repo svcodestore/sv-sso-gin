@@ -159,13 +159,15 @@ func GetCurrentApplication(c *gin.Context) {
 		application.UpdatedByUser = application.CreatedByUser
 
 		isIntranet := true
-		for _, s := range strings.Split(c.Request.Host, ".") {
-			ss := strings.Split(s, ":")
-			if len(ss) > 1 {
-				s = ss[0]
+		if !strings.HasPrefix(c.Request.Host, "localhost") {
+			for _, s := range strings.Split(c.Request.Host, ".") {
+				ss := strings.Split(s, ":")
+				if len(ss) > 1 {
+					s = ss[0]
+				}
+				_, e := strconv.Atoi(s)
+				isIntranet = isIntranet && e == nil
 			}
-			_, e := strconv.Atoi(s)
-			isIntranet = isIntranet && e == nil
 		}
 
 		if application.RedirectURIs != "" {
